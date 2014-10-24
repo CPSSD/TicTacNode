@@ -114,6 +114,38 @@ function newGame(q){
 // next function
 function next(q){
 
+  // Check is the passed request "id"
+  if(Object.getOwnPropertyNames(q).indexOf('id') == -1){
+    err(102);
+
+  // If the passed parameter is id, but its empty, return error 101
+  } else if(q.id.length === 0){
+    err(101);
+
+  // If everything is right, continue
+  } else {
+
+    // Get the game status
+    var gs = gameStatus(q);
+
+    // If game id is was not found, output error 100
+    if(gs == -1){
+      err(100);
+
+    // If everything is fine, continue
+    } else {
+      ret.status = "okay";
+      ret.board = gs.board;
+      ret.turn = gs.turn;
+
+      // If there is a winner, output that
+      if(gs.winner != -1){
+        ret.winner = gs.winner;
+      }
+    }
+
+
+  }
 }
 
 // move function
@@ -142,17 +174,18 @@ function joinGame(q){
       {
         name: "",
         id: null,
-        now_moves: true
       },
       {
         name: "",
         id: null,
-        now_moves: false
       }
     ],
 
     // The game board
-    board: [0,0,0,0,0,0,0,0,0]
+    board: [0,0,0,0,0,0,0,0,0],
+
+    // Who is the next player do to the movement
+    next: 1
   }
 
   // If games exists, check does user exist
@@ -199,8 +232,61 @@ function joinGame(q){
 
 
 
+// Get the game of the player
+function getPlayerGame(q){
+
+  //Cycle through the games to find the player
+  for(var i = 0; i < game.games.length; i++){
+    var g = game.games[i];
+    var id = q.id.split('-')[1];
+
+    // If player was found, return the game number
+    if(g.player[0].id == id || g.player[1].id == id){
+      return i;
+    }
+  }
+
+  // If the player is not found, return -1
+  return -1;
+
+}
 
 
+//Check the status of the game
+function gameStatus(q){
+
+  // Get the game of the player
+  var g = getPlayerGame(q);
+
+  // If player was not found, return -1
+  if(g == -1){
+    return -1;
+  } else {
+    var result = {};
+    var cg = game.games[g];
+
+    result.board = cg.board;
+    result.turn = cg.next;
+
+    var w = checkWinner();
+
+    if(w != -1){
+      result.winner = w;
+    } else {
+      result.winner = -1;
+    }
+
+    return result;
+
+  }
+}
+
+
+
+// Check who is the winner
+function checkWinner(){
+  return -1;
+}
 
 
 // ERROR HANDLING //
