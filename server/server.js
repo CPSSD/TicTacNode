@@ -6,7 +6,7 @@ var http = require('http'),
 var ret = {};
 
 // Create the server
-http.createServer( function(req , res) ){
+http.createServer( function(req , res){
   // Respond with HTTP status 200 OK, and set the content-type to json
   res.writeHead(200, {'Content-Type': 'application/json'});
 
@@ -15,4 +15,4 @@ http.createServer( function(req , res) ){
   ret = {};
 
 // Set the server port
-}.listen(1337);
+}).listen(1337);
