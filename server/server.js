@@ -330,76 +330,38 @@ function gameStatus(q){
 }
 
 
-
 // Check who is the winner
 function checkWinner(g){
 
   // assign the board to b
-  var b = game.games[g].board;
-
-  // Check did 1 win
-  if(
-
-    // Horizontally
-    (b[0] == b[1] && b[2] == 1)
-    ||
-    (b[3] == b[4] && b[5] == 1)
-    ||
-    (b[6] == b[7] && b[8] == 1)
-    ||
-    // Vertically
-    (b[0] == b[3] && b[6] == 1)
-    ||
-    (b[1] == b[4] && b[7] == 1)
-    ||
-    (b[2] == b[5] && b[8] == 1)
-    ||
-    //Diagonally
-    (b[0] == b[4] && b[8] == 1)
-    ||
-    (b[2] == b[4] && b[6] == 1)
-  ){
-    game.games[g].finished = true;
-    return 1;
-
-  // Check did 2 win
-  } else if(
-    // Horizontally
-    (b[0] == b[1] && b[2] == 2)
-    ||
-    (b[3] == b[4] && b[5] == 2)
-    ||
-    (b[6] == b[7] && b[8] == 2)
-    ||
-    // Vertically
-    (b[0] == b[3] && b[6] == 2)
-    ||
-    (b[1] == b[4] && b[7] == 2)
-    ||
-    (b[2] == b[5] && b[8] == 2)
-    ||
-    //Diagonally
-    (b[0] == b[4] && b[8] == 2)
-    ||
-    (b[2] == b[4] && b[6] == 2)
-  ){
-    game.games[g].finished = true;
-    return 2;
-
-  // If no win
-  } else {
-
-    // Check are there any 0s. If there are it means game is not finished
-    for(var i = 0; i < b.length; i++){
-      if(b[i] == 0){
-        return -1;
-      }
-    }
-
-    // Otherwise return 0 - draw
-    game.games[g].finished = true;
-    return 0;
+  b = game.games[g].board;
+  for (var i = 0; i < 3; i++) {
+     if (b[i*3] == b[i*3 + 1] && b[i*3] == b[i*3 + 2] && b[i*3] > 0) {
+        game.games[g].finished = true;
+	return b[i*3];
+     }
+     if (b[i] == b[i + 3] && b[i] == b[i + 6] && b[i] > 0) {
+        game.games[g].finished = true;
+        return b[i];
+     }
   }
+  if (b[0] == b[4] && b[0] == b[8] && b[0] > 0) {
+     game.games[g].finished = true;
+     return b[0];
+  }
+  if (b[2] == b[4] && b[2] == b[6] && b[2] > 0) {
+     game.games[g].finished = true;
+     return b[2];
+  }
+  // Check are there any 0s. If there are it means game is not finished
+  for(var i = 0; i < b.length; i++){
+    if(b[i] == 0){
+      return -1;
+    }
+  }
+  // Otherwise return 0 - draw
+  game.games[g].finished = true;
+  return 0;
 }
 
 
