@@ -170,22 +170,32 @@ function move(q){
 
     // If everything is right, continue
     } else {
-      var dm = doMove(q);
 
-      // If not found, send other error
-      if(dm == -1){
-        err(100);
-
-      // Send invalid move
-      } else if(dm == 0){
-        err(106)
-
-      // Send not player's turn
-      } else if(dm == 1){
-        err(105);
+      // Check is game finished
+      checkWinner();
+      if(game.games[getPlayerGame(q)].finished){
+        err(106);
       } else {
-        ret.status = "okay";
+
+        // Do the move
+        var dm = doMove(q);
+
+        // If not found, send other error
+        if(dm == -1){
+          err(100);
+
+        // Send invalid move
+        } else if(dm == 0){
+          err(106)
+
+        // Send not player's turn
+        } else if(dm == 1){
+          err(105);
+        } else {
+          ret.status = "okay";
+        }
       }
+
     }
   }
 }
@@ -226,7 +236,10 @@ function joinGame(q){
     board: [0,0,0,0,0,0,0,0,0],
 
     // Who is the next player do to the movement
-    next: 1
+    next: 1,
+
+    // Do a check is the game finished
+    finished: false
   };
 
   // If games exists, check does user exist
@@ -352,6 +365,7 @@ function checkWinner(g){
     ||
     (b[2] == b[4] == b[6] == 1)
   ){
+    game.games[g].finished = true;
     return 1;
 
   // Check did 2 win
@@ -375,6 +389,7 @@ function checkWinner(g){
     ||
     (b[2] == b[4] == b[6] == 2)
   ){
+    game.games[g].finished = true;
     return 2;
 
   // If no win
@@ -388,6 +403,7 @@ function checkWinner(g){
     }
 
     // Otherwise return 0 - draw
+    game.games[g].finished = true;
     return 0;
   }
 }
