@@ -170,7 +170,13 @@ function move(q){
 
     // If everything is right, continue
     } else {
-      
+      var dm = doMove(q);
+
+      if(dm == -1){
+        err(100);
+      } else {
+        
+      }
     }
   }
 }
@@ -323,6 +329,21 @@ function checkParam(param, q){
     return true;
   }
 }
+
+
+// doMove function
+function doMove(q){
+  var id = getPlayerGame(q);
+
+  if(id == -1){
+    return -1;
+  } else {
+
+  }
+}
+
+
+
 
 
 
