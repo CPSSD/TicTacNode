@@ -180,8 +180,8 @@ function move(q){
           err(100);
 
         // Send invalid move
-        } else if(dm == 0){
-          err(106)
+        } else if(dm === 0){
+          err(106);
 
         // Send not player's turn
         } else if(dm == 1){
@@ -334,7 +334,7 @@ function gameStatus(q){
 function checkWinner(g){
 
   // assign the board to b
-  b = game.games[g].board;
+  var b = game.games[g].board;
   for (var i = 0; i < 3; i++) {
      if (b[i*3] == b[i*3 + 1] && b[i*3] == b[i*3 + 2] && b[i*3] > 0) {
         game.games[g].finished = true;
@@ -354,8 +354,8 @@ function checkWinner(g){
      return b[2];
   }
   // Check are there any 0s. If there are it means game is not finished
-  for(var i = 0; i < b.length; i++){
-    if(b[i] == 0){
+  for(var x = 0; i < b.length; x++){
+    if(b[x] === 0){
       return -1;
     }
   }
@@ -395,11 +395,12 @@ function doMove(q){
 
     // If there isn't allow user to make a move
     } else {
+      var l;
       // Get player's letter
       if(game.games[g].player[0].id == id){
-        var l = 1;
+        l = 1;
       } else {
-        var l = 2;
+        l = 2;
       }
 
       // If its not player's turn, send 1
