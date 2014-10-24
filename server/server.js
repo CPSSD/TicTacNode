@@ -7,7 +7,13 @@ var ret = {};
 
 // The game "database". Stores all games, users, boards and moves.
 // DATA LOST ON RESTART
-var game = [];
+var game = {
+  // The total amount of players playing the game
+  players: 0,
+
+  // Current games
+  games: []
+};
 
 // Create the server
 http.createServer( function(req , res){
@@ -69,14 +75,35 @@ http.createServer( function(req , res){
 
 
 
+
+
 ////////////////////////////////////
 //    ALL NECCESSARY FUNCTIONS    //
 ////////////////////////////////////
 
 
+
+
+// MAIN FUNCTIONS //
+
+
 // newGame function
 function newGame(q){
 
+  // Check is the passed request "name"
+  if(q.name.length === 0){
+    err(102);
+  } else {
+
+    // Join the game, or make a new one if nowhere to join
+    var gm = joinGame(q);
+
+    // Return data
+    ret.status = "okay";
+    ret.id = gm.id;
+    ret.letter = gm.letter;
+
+  }
 }
 
 // next function
@@ -89,6 +116,27 @@ function move(q){
 
 }
 
+
+
+
+
+
+// SECONDARY "WORKER" FUNCTIONS //
+
+// Function make for joining games
+function joinGame(q){
+
+  return {id: 0, letter: 1};
+
+}
+
+
+
+
+
+
+
+// ERROR HANDLING //
 
 // Error handling
 function err(c){
