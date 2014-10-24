@@ -171,11 +171,6 @@ function move(q){
     // If everything is right, continue
     } else {
 
-      // Check is game finished
-      checkWinner();
-      if(game.games[getPlayerGame(q)].finished){
-        err(106);
-      } else {
 
         // Do the move
         var dm = doMove(q);
@@ -194,7 +189,6 @@ function move(q){
         } else {
           ret.status = "okay";
         }
-      }
 
     }
   }
@@ -397,7 +391,7 @@ function checkWinner(g){
 
     // Check are there any 0s. If there are it means game is not finished
     for(var i = 0; i < b.length; i++){
-      if(i == 0){
+      if(b[i] == 0){
         return -1;
       }
     }
@@ -432,38 +426,45 @@ function doMove(q){
     return -1;
 
   } else {
+    // Perform a check is there a winner already
+    checkWinner(g);
+    if(game.games[g].finished){
+      return 0;
 
-    // Get player's letter
-    if(game.games[g].player[0].id == id){
-      var l = 1;
+    // If there isn't allow user to make a move
     } else {
-      var l = 2;
-    }
-
-    // If its not player's turn, send 1
-    if(l != game.games[g].next){
-      return 1;
-    }
-
-    // Try to make a move
-    if(game.games[g].board[q.position] === 0){
-
-      //If successful, enter the position
-      game.games[g].board[q.position] = l;
-
-      // Change the next player to do a move
-      if(l == 1){
-        game.games[g].next = 2;
+      // Get player's letter
+      if(game.games[g].player[0].id == id){
+        var l = 1;
       } else {
-        game.games[g].next = 1;
+        var l = 2;
       }
 
-      // Return 2 if everything succeedes
-      return 2;
+      // If its not player's turn, send 1
+      if(l != game.games[g].next){
+        return 1;
+      }
 
-    // If space is occupied send 0
-    } else {
-      return 0;
+      // Try to make a move
+      if(game.games[g].board[q.position] === 0){
+
+        //If successful, enter the position
+        game.games[g].board[q.position] = l;
+
+        // Change the next player to do a move
+        if(l == 1){
+          game.games[g].next = 2;
+        } else {
+          game.games[g].next = 1;
+        }
+
+        // Return 2 if everything succeedes
+        return 2;
+
+      // If space is occupied send 0
+      } else {
+        return 0;
+      }
     }
   }
 }
