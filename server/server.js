@@ -172,10 +172,19 @@ function move(q){
     } else {
       var dm = doMove(q);
 
+      // If not found, send other error
       if(dm == -1){
         err(100);
+
+      // Send invalid move
+      } else if(dm == 0){
+        err(106)
+
+      // Send not player's turn
+      } else if(dm == 1){
+        err(105);
       } else {
-        
+        ret.status = "okay";
       }
     }
   }
@@ -300,7 +309,7 @@ function gameStatus(q){
     result.board = cg.board;
     result.turn = cg.next;
 
-    var w = checkWinner();
+    var w = checkWinner(g);
 
     if(w != -1){
       result.winner = w;
@@ -316,8 +325,64 @@ function gameStatus(q){
 
 
 // Check who is the winner
-function checkWinner(){
-  return -1;
+function checkWinner(g){
+
+  // assign the board to b
+  b = game.games[g].board;
+
+  // Check did 1 win
+  if(
+    b == [1,1,1,0,0,0,0,0,0]
+    ||
+    b == [0,0,0,1,1,1,0,0,0]
+    ||
+    b == [0,0,0,0,0,0,1,1,1]
+    ||
+    b == [1,0,0,1,0,0,1,0,0]
+    ||
+    b == [0,1,0,0,1,0,0,1,0]
+    ||
+    b == [0,0,1,0,0,1,0,0,1]
+    ||
+    b == [1,0,0,0,1,0,0,0,1]
+    ||
+    b == [0,0,1,0,1,0,1,0,0]
+  ){
+    return 1;
+
+  // Check did 2 win
+  } else if(
+    b == [2,2,2,0,0,0,0,0,0]
+    ||
+    b == [0,0,0,2,2,2,0,0,0]
+    ||
+    b == [0,0,0,0,0,0,2,2,2]
+    ||
+    b == [2,0,0,2,0,0,2,0,0]
+    ||
+    b == [0,2,0,0,2,0,0,2,0]
+    ||
+    b == [0,0,2,0,0,2,0,0,2]
+    ||
+    b == [1,0,0,0,1,0,0,0,1]
+    ||
+    b == [0,0,1,0,1,0,1,0,0]
+  ){
+    return 2;
+
+  // If no win
+  } else {
+
+    // Check are there any 0s. If there are it means game is not finished
+    for(var i = 0; i < b.length; i++){
+      if(i == 0){
+        return -1;
+      }
+    }
+
+    // Otherwise return 0 - draw
+    return 0;
+  }
 }
 
 
@@ -333,12 +398,50 @@ function checkParam(param, q){
 
 // doMove function
 function doMove(q){
-  var id = getPlayerGame(q);
+  // Get the player's game
+  var g = getPlayerGame(q);
 
-  if(id == -1){
+  // Get user's id
+  var id = q.id.split('-')[1];
+
+  // If the game-id doesn't have a game, give error
+  if(g == -1){
     return -1;
+
   } else {
 
+    // Get player's letter
+    if(game.games[g].player[0].id == id){
+      var l = 1;
+    } else {
+      var l = 2;
+    }
+
+    // If its not player's turn, send 1
+    if(l != game.games[g].next){
+      return 1;
+    }
+
+    // Try to make a move
+    if(game.games[g].board[q.position] === 0){
+
+      //If successful, enter the position
+      game.games[g].board[q.position] = l;
+
+      // Change the next player to do a move
+      if(l == 1){
+        game.games[g].next = 2;
+      } else {
+        game.games[g].next = 1;
+      }
+
+      // Return 2 if everything succeedes
+      return 2;
+
+    // If space is occupied send 0
+    } else {
+      return 0;
+    }
   }
 }
 
