@@ -5,6 +5,10 @@ var http = require('http'),
 // Declare the return object. Global as functions use it
 var ret = {};
 
+// The game "database". Stores all games, users, boards and moves.
+// DATA LOST ON RESTART
+var game = [];
+
 // Create the server
 http.createServer( function(req , res){
   // Respond with HTTP status 200 OK, and set the content-type to json
