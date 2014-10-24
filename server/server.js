@@ -91,8 +91,14 @@ http.createServer( function(req , res){
 function newGame(q){
 
   // Check is the passed request "name"
-  if(q.name.length === 0){
+  if(Object.getOwnPropertyNames(q).indexOf('name') == -1){
     err(102);
+
+  // If the passed parameter is name, but its empty, return error 101
+  } else if(q.name.length === 0){
+    err(101);
+
+  // If everything is fine, continue
   } else {
 
     // Join the game, or make a new one if nowhere to join
@@ -102,7 +108,6 @@ function newGame(q){
     ret.status = "okay";
     ret.id = gm.id;
     ret.letter = gm.letter;
-
   }
 }
 
@@ -126,7 +131,69 @@ function move(q){
 // Function make for joining games
 function joinGame(q){
 
-  return {id: 0, letter: 1};
+  // Counter and current game
+  var i,g = 0;
+
+  //Make a game object
+  var gameObj = {
+
+    // Store each player
+    player: [
+      {
+        name: "",
+        id: null,
+        now_moves: true
+      },
+      {
+        name: "",
+        id: null,
+        now_moves: false
+      }
+    ],
+
+    // The game board
+    board: [0,0,0,0,0,0,0,0,0]
+  }
+
+  // If games exists, check does user exist
+  if(game.games.length > 0){
+
+    // Cycle through all current games
+    for(i = 0; i < game.games.length; i++){
+
+      // Make the g the current game
+      var g = game.games[i];
+
+      // Check is the player already in the game (for x)
+      if(g.player[0].name === q.name){
+        return { id: "game-"+g.player[0].id, letter: 1 };
+
+      // Check is the player already in the game (for x)
+      } else if(g.player[1].name === q.name){
+        return { id: "game-"+g.player[1].id, letter: 2 };
+
+      // Check is the second player empty. If it is, play as it
+      } else if(g.player[1].name === ""){
+        g.player[1].name = q.name;
+        g.player[1].id = game.players++;
+
+        return { id: "game-"+g.player[1].id, letter: 2 };
+      }
+
+    }
+  }
+
+
+  // If no places are available to fill, make a new game
+  gameObj.player[0].name = q.name;
+  gameObj.player[0].id = game.players++;
+
+
+  // Add the new player to the game
+  game.games.push(gameObj);
+
+  // Return the new data
+  return {id: "game-"+gameObj.player[0].id, letter: 1};
 
 }
 
