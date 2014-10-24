@@ -10,6 +10,47 @@ http.createServer( function(req , res){
   // Respond with HTTP status 200 OK, and set the content-type to json
   res.writeHead(200, {'Content-Type': 'application/json'});
 
+  // Parse the URL to get the GET requests
+  var get = url.parse(req.url, true);
+
+  // Declare the query and pathname
+  var q = get.query,
+      p = get.pathname;
+
+  // Check is the action given
+  if(p === "/"){
+    err(103);
+
+  // Check are any parameters specified
+  } else if(Object.getOwnPropertyNames(q).length === 0){
+    err(101);
+
+  // If everything is correct, proceed.
+  } else {
+    switch(p){
+      // Do this on new Game
+      case '/newGame':
+        newGame(q);
+        break;
+
+      // Do this on next
+      case '/next':
+        next(q);
+        break;
+
+      // Do this on move
+      case '/move':
+        move(q);
+        break;
+
+      // If the request is not found, return Error 103
+      default:
+        err(103);
+        break;
+    }
+  }
+
+
   // Return the finished JSON result and clear the result
   res.end( JSON.stringify(ret) );
   ret = {};
@@ -28,6 +69,21 @@ http.createServer( function(req , res){
 //    ALL NECCESSARY FUNCTIONS    //
 ////////////////////////////////////
 
+
+// newGame function
+function newGame(q){
+
+}
+
+// next function
+function next(q){
+
+}
+
+// move function
+function move(q){
+
+}
 
 
 // Error handling
