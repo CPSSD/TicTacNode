@@ -16,5 +16,6 @@ Tic Tac Toe game server
   * Simple Directmedia Layer for GUI.
   * libcurl for sending HTTP GET requests.
   * Boost::PropertyTree for JSON parsing.
+  * Boost Test Library for unit testing.
 
 If there's anything I've forgotten please add it. If we have multiple ideas on what to use for the same thing please add it as well, on the same line.
