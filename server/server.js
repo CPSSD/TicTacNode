@@ -91,7 +91,7 @@ http.createServer( function(req , res){
 function newGame(q){
 
   // Check is the passed request "name"
-  if(Object.getOwnPropertyNames(q).indexOf('name') == -1){
+  if(!checkParam("name", q)){
     err(102);
 
   // If the passed parameter is name, but its empty, return error 101
@@ -115,7 +115,7 @@ function newGame(q){
 function next(q){
 
   // Check is the passed request "id"
-  if(Object.getOwnPropertyNames(q).indexOf('id') == -1){
+  if(!checkParam("id", q)){
     err(102);
 
   // If the passed parameter is id, but its empty, return error 101
@@ -149,10 +149,35 @@ function next(q){
   }
 }
 
+
 // Move function
 function move(q){
 
+  // Check are there 2 parameters
+  if(Object.getOwnPropertyNames(q).length !== 2){
+    err(101);
+
+  // If 2 parameters are given, continue
+  } else {
+
+    // Check are the 2 parameters id and position
+    if(!checkParam("id", q) || !checkParam("position", q)){
+      err(102);
+
+    // Check are is any parameter empty
+    } else if(q.id.length === 0 || q.position.length === 0){
+      err(101);
+
+    // If everything is right, continue
+    } else {
+      
+    }
+  }
 }
+
+
+
+
 
 
 
@@ -288,6 +313,20 @@ function gameStatus(q){
 function checkWinner(){
   return -1;
 }
+
+
+// Function to check are the request parameters ok
+function checkParam(param, q){
+  if(Object.getOwnPropertyNames(q).indexOf(param) == -1){
+    return false;
+  } else {
+    return true;
+  }
+}
+
+
+
+
 
 
 // ERROR HANDLING //
