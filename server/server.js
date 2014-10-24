@@ -136,11 +136,12 @@ function next(q){
     } else {
       ret.status = "okay";
       ret.board = gs.board;
-      ret.turn = gs.turn;
 
       // If there is a winner, output that
       if(gs.winner != -1){
         ret.winner = gs.winner;
+      } else {
+        ret.turn = gs.turn;
       }
     }
 
@@ -148,7 +149,7 @@ function next(q){
   }
 }
 
-// move function
+// Move function
 function move(q){
 
 }
@@ -163,8 +164,8 @@ function move(q){
 // Function make for joining games
 function joinGame(q){
 
-  // Counter and current game
-  var i,g = 0;
+  // Counter
+  var i = 0;
 
   //Make a game object
   var gameObj = {
@@ -186,7 +187,7 @@ function joinGame(q){
 
     // Who is the next player do to the movement
     next: 1
-  }
+  };
 
   // If games exists, check does user exist
   if(game.games.length > 0){
