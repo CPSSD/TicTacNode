@@ -335,29 +335,29 @@ function gameStatus(q){
 function checkWinner(g){
 
   // assign the board to b
-  b = game.games[g].board;
+  var b = game.games[g].board;
 
   // Check did 1 win
   if(
 
     // Horizontally
-    (b[0] == b[1] == b[2] == 1)
+    (b[0] == b[1] && b[2] == 1)
     ||
-    (b[3] == b[4] == b[5] == 1)
+    (b[3] == b[4] && b[5] == 1)
     ||
-    (b[6] == b[7] == b[8] == 1)
+    (b[6] == b[7] && b[8] == 1)
     ||
     // Vertically
-    (b[0] == b[3] == b[6] == 1)
+    (b[0] == b[3] && b[6] == 1)
     ||
-    (b[1] == b[4] == b[7] == 1)
+    (b[1] == b[4] && b[7] == 1)
     ||
-    (b[2] == b[5] == b[8] == 1)
+    (b[2] == b[5] && b[8] == 1)
     ||
     //Diagonally
-    (b[0] == b[4] == b[8] == 1)
+    (b[0] == b[4] && b[8] == 1)
     ||
-    (b[2] == b[4] == b[6] == 1)
+    (b[2] == b[4] && b[6] == 1)
   ){
     game.games[g].finished = true;
     return 1;
@@ -365,23 +365,23 @@ function checkWinner(g){
   // Check did 2 win
   } else if(
     // Horizontally
-    (b[0] == b[1] == b[2] == 2)
+    (b[0] == b[1] && b[2] == 2)
     ||
-    (b[3] == b[4] == b[5] == 2)
+    (b[3] == b[4] && b[5] == 2)
     ||
-    (b[6] == b[7] == b[8] == 2)
+    (b[6] == b[7] && b[8] == 2)
     ||
     // Vertically
-    (b[0] == b[3] == b[6] == 2)
+    (b[0] == b[3] && b[6] == 2)
     ||
-    (b[1] == b[4] == b[7] == 2)
+    (b[1] == b[4] && b[7] == 2)
     ||
-    (b[2] == b[5] == b[8] == 2)
+    (b[2] == b[5] && b[8] == 2)
     ||
     //Diagonally
-    (b[0] == b[4] == b[8] == 2)
+    (b[0] == b[4] && b[8] == 2)
     ||
-    (b[2] == b[4] == b[6] == 2)
+    (b[2] == b[4] && b[6] == 2)
   ){
     game.games[g].finished = true;
     return 2;
