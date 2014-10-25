@@ -50,6 +50,18 @@ int getWinner(int b[9])
     return 0;
 }
 
+bool validMove(int board[9], int pos)
+{
+    if (pos >= 0) {
+        if (pos < 9) {
+            if (board[pos] == 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 int main()
 {
     int board[] = {1, 0, 0, 1, 0, 0, 1, 0, 0};
