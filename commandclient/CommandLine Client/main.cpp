@@ -1,4 +1,10 @@
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/foreach.hpp>
 #include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -62,10 +68,69 @@ bool validMove(int board[9], int pos)
     return false;
 }
 
+struct jsonObject
+{
+    string status;
+    int code;
+    string message;
+    string id;
+    int letter;
+    int board[9];
+    int turn;
+    int winner;
+};
+
+void getBoard(int b[9], boost::property_tree::ptree pt)
+{
+    if (pt.count("board") == 0) {
+        for (int i = 0; i < 9; i++) {
+            b[i] = 0;
+        }
+        return;
+    }
+    vector<int> r;
+    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, pt.get_child("board")) {
+        r.push_back(v.second.get_value<int>());
+    }
+    for (int i = 0; i < 9; i++) {
+        if (i < r.size()) {
+            b[i] = r[i];
+        } else {
+            b[i] = 0;
+        }
+    }
+}
+
+jsonObject processJson(string x)
+{
+    stringstream ss;
+    ss << x;
+    boost::property_tree::ptree pt;
+    boost::property_tree::read_json(ss, pt);
+    jsonObject ret;
+    ret.status = pt.get("status", "");
+    ret.code = pt.get("code", 0);
+    ret.message = pt.get("message", "");
+    ret.id = pt.get("id", "");
+    ret.letter = pt.get("letter", 0);
+    getBoard(ret.board, pt);
+    ret.turn = pt.get("turn", 0);
+    ret.winner = pt.get("winner", -1);
+    return ret;
+}
+
 int main()
 {
     int board[] = {1, 0, 0, 1, 0, 0, 1, 0, 0};
-    printBoard(board);
     cout << getWinner(board) << endl;
+    printBoard(board);
+    jsonObject x = processJson("{\"status\":\"okay\",\"board\":[0,0,0,1,0,0,0,1,0],\"turn\":1}");
+    cout << "Json Example : " << endl;
+    cout << x.status << endl;
+    cout << x.turn << endl;
+    cout << "board : " << endl;
+    for (int i = 0; i < 9; i++) {
+        cout << x.board[i] << endl;
+    }
     return 0;
 }

@@ -31,11 +31,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
-			<Add directory="$(#boost.include)" />
+			<Add directory="$(#boost)" />
 		</Compiler>
 		<Linker>
-			<Add library="boost_filesystem-mgw45-mt-1_47" />
-			<Add library="boost_system-mgw45-mt-1_47" />
 			<Add directory="$(#boost.lib)" />
 		</Linker>
 		<Unit filename="main.cpp" />
