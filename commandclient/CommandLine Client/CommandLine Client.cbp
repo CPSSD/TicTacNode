@@ -31,7 +31,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add option="-lcurl" />
 			<Add directory="$(#boost)" />
+			<Add directory="$(#libcurl)" />
 		</Compiler>
 		<Linker>
 			<Add directory="$(#boost.lib)" />

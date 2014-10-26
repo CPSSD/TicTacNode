@@ -119,9 +119,35 @@ jsonObject processJson(string x)
     return ret;
 }
 
+string exec(char* cmd)
+{
+    FILE* pipe = popen(cmd, "r");
+    if (!pipe) return "ERROR";
+    char buffer[128];
+    std::string result = "";
+    while(!feof(pipe)) {
+    	if(fgets(buffer, 128, pipe) != NULL)
+    		result += buffer;
+    }
+    pclose(pipe);
+    return result;
+}
+
+string getData(string host, string action, string params)
+{
+    string command = "curl ";
+    command = command + host + '/' + action + '?' + params + " -s";
+    char arr[command.length()];
+    for (int i = 0; i < command.length(); i++) {
+        arr[i] = command[i];
+    }
+    return exec(arr);
+}
+
 int main()
 {
     int board[] = {1, 0, 0, 1, 0, 0, 1, 0, 0};
+    cout << getData("vm1.razoft.net:1337", "next", "id=game-0") << endl;
     cout << getWinner(board) << endl;
     printBoard(board);
     jsonObject x = processJson("{\"status\":\"okay\",\"board\":[0,0,0,1,0,0,0,1,0],\"turn\":1}");
