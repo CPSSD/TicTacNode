@@ -8,22 +8,31 @@
 
 using namespace std;
 
-char boardChar(int x)
+char boardChar(int x, char def)
 {
     if (x == 2) {
         return 'O';
     } else if (x == 1) {
         return 'X';
     }
-    return ' ';
+    return def;
 }
 
-void printBoard(int b[9])
+char toChar(int x)
+{
+    return '0' + x;
+}
+
+void printBoard(int b[9], bool forSelection)
 {
     cout << "Current board : " << endl;
     for (int i = 0; i < 3; i++) {
         cout << "-------" << endl;
-        cout << "|" << boardChar(b[i*3]) << "|" << boardChar(b[i*3 + 1]) << "|" << boardChar(b[i*3 + 2]) << "|" << endl;
+        if (forSelection == false) {
+            cout << "|" << boardChar(b[i*3], ' ') << "|" << boardChar(b[i*3 + 1], ' ') << "|" << boardChar(b[i*3 + 2], ' ') << "|" << endl;
+        } else {
+            cout << "|" << boardChar(b[i*3], toChar(i*3 + 1)) << "|" << boardChar(b[i*3 + 1], toChar(i*3 + 2)) << "|" << boardChar(b[i*3 + 2], toChar(i*3 + 3)) << "|" << endl;
+        }
     }
     cout << "-------" << endl;
 }
@@ -144,12 +153,123 @@ string getData(string host, string action, string params)
     return exec(arr);
 }
 
+void handleError(jsonObject x)
+{
+    cout << "status : " << x.status << endl;
+    if (x.code > 0) {
+        cout << "code : " << x.code << endl;
+    }
+    if (x.message != "") {
+        cout << "message : " << x.message << endl;
+    }
+}
+
+char getXOFromInt(int x)
+{
+    if (x == 1) {
+        return 'X';
+    } else {
+        return 'O';
+    }
+}
+
+void handleWinner(int player, int winner)
+{
+    if (winner == 0) {
+        cout << "The game has ended in a draw" << endl;
+    } else if (winner == player) {
+        cout << "You have won the game, congratulations!" << endl;
+    } else {
+        cout << "You have lost the game, better luck next time" << endl;
+    }
+}
+
+int getOppsite(int x)
+{
+    if (x == 1) {
+        return 2;
+    }
+    return 1;
+}
+
+void startGame(string name)
+{
+    string serverResponse = getData("vm1.razoft.net:1337", "newGame", "name=" + name);
+    jsonObject response = processJson(serverResponse);
+    if (response.status == "okay") {
+        string id = response.id;
+        int player = response.letter;
+        int wMove = 1;
+        int board[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        cout << "Game started, you are playing as " << getXOFromInt(player) << endl;
+        while (true) {
+            if (getWinner(board) >= 0) {
+                handleWinner(player, getWinner(board));
+                break;
+            } else {
+                if (wMove == player) {
+                    cout << "It is your turn, select a move to make : " << endl;
+                    printBoard(board, true);
+                    int m;
+                    while (true) {
+                        cin >> m;
+                        if (validMove(board, m - 1)) {
+                            board[m - 1] = player;
+                            wMove = getOppsite(wMove);
+                            printBoard(board, false);
+                            cout << "Waiting for other player to move" << endl;
+                            break;
+                        } else {
+                            cout << "Invalid Move" << endl;
+                        }
+                    }
+                } else {
+                    serverResponse = getData("vm1.razoft.net:1337", "next", "id=" + id);
+                    response = processJson(serverResponse);
+                    if (response.status == "okay") {
+
+                    } else {
+                        handleError(response);
+                    }
+                    Sleep(2000);
+                    break;
+                }
+            }
+        }
+    } else {
+        handleError(response);
+    }
+}
+
+void playGames()
+{
+    string name;
+    cout << "Please enter your name : " << endl;
+    cin >> name;
+    char anwser;
+    while (true) {
+        cout << "Would you like to start a new game? y/n" << endl;
+        while (true) {
+            cin >> anwser;
+            if (tolower(anwser) == 'y') {
+                break;
+            } else if (tolower(anwser) == 'n') {
+                return;
+            }
+            cout << "invalid response" << endl;
+        }
+        startGame(name);
+    }
+}
+
 int main()
 {
+    playGames();
+    return 0;
     int board[] = {1, 0, 0, 1, 0, 0, 1, 0, 0};
     cout << getData("vm1.razoft.net:1337", "next", "id=game-0") << endl;
     cout << getWinner(board) << endl;
-    printBoard(board);
+    printBoard(board, false);
     jsonObject x = processJson("{\"status\":\"okay\",\"board\":[0,0,0,1,0,0,0,1,0],\"turn\":1}");
     cout << "Json Example : " << endl;
     cout << x.status << endl;
