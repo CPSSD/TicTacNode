@@ -145,7 +145,7 @@ string exec(char* cmd)
 string getData(string host, string action, string params)
 {
     string command = "curl ";
-    command = command + host + '/' + action + '?' + params + " -s";
+    command = command + "\"" + host + '/' + action + '?' + params + "\"" + " -s";
     char arr[command.length()];
     for (int i = 0; i < command.length(); i++) {
         arr[i] = command[i];
@@ -202,6 +202,9 @@ void startGame(string name)
         int wMove = 1;
         int board[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
         cout << "Game started, you are playing as " << getXOFromInt(player) << endl;
+        if (player == 2) {
+            cout << "Waiting for other player to move" << endl;
+        }
         while (true) {
             if (getWinner(board) >= 0) {
                 handleWinner(player, getWinner(board));
@@ -215,6 +218,11 @@ void startGame(string name)
                         cin >> m;
                         if (validMove(board, m - 1)) {
                             board[m - 1] = player;
+                            serverResponse = getData("vm1.razoft.net:1337", "move", "id=" + id + "&position=" + toChar(m - 1));
+                            response = processJson(serverResponse);
+                            if (response.status != "okay") {
+                                handleError(response);
+                            }
                             wMove = getOppsite(wMove);
                             printBoard(board, false);
                             cout << "Waiting for other player to move" << endl;
@@ -227,12 +235,21 @@ void startGame(string name)
                     serverResponse = getData("vm1.razoft.net:1337", "next", "id=" + id);
                     response = processJson(serverResponse);
                     if (response.status == "okay") {
-
+                        if (response.winner >= 0) {
+                            handleWinner(player, response.winner);
+                            break;
+                        } else {
+                            if (response.turn == player) {
+                                wMove = player;
+                                for (int i = 0; i < 9; i++) {
+                                    board[i] = response.board[i];
+                                }
+                            }
+                        }
                     } else {
                         handleError(response);
                     }
                     Sleep(2000);
-                    break;
                 }
             }
         }
