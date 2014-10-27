@@ -145,7 +145,7 @@ string exec(char* cmd)
 string getData(string host, string action, string params)
 {
     string command = "curl ";
-    command = command + "\"" + host + '/' + action + '?' + params + "\"" + " -s";
+    command = command + "\"" + host + '/' + action + '?' + params + "\" -s ";
     char arr[command.length()];
     for (int i = 0; i < command.length(); i++) {
         arr[i] = command[i];
