@@ -278,7 +278,10 @@ function joinGame(q){
     finished: false,
 
     //The relative server time when the game has started
-    start_time: null
+    start_time: null,
+
+    // When was the last move
+    last_move: null
   };
 
   // If games exists, check does user exist
@@ -471,8 +474,10 @@ function doMove(q){
       // Try to make a move
       if(game.games[g].board[q.position] === 0){
 
-        //If successful, enter the position
+        //If successful, enter the position and update the timer
+        game.games[g].last_move = server_time;
         game.games[g].board[q.position] = l;
+
 
         // Change the next player to do a move
         if(l == 1){
