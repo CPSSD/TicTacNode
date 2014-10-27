@@ -478,7 +478,6 @@ function doMove(q){
         game.games[g].last_move = server_time;
         game.games[g].board[q.position] = l;
 
-
         // Change the next player to do a move
         if(l == 1){
           game.games[g].next = 2;
@@ -505,6 +504,11 @@ function setFinished(g){
   game.games[g].player[0].name += "_____";
   game.games[g].player[1].name += "_____";
 }
+
+
+
+
+
 
 
 
