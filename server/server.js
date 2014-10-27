@@ -15,6 +15,14 @@ var game = {
   games: []
 };
 
+// Set the relative server time.
+var server_time;
+
+
+
+
+
+
 // Create the server
 http.createServer( function(req , res){
   // Respond with HTTP status 200 OK, and set the content-type to json
@@ -73,6 +81,14 @@ http.createServer( function(req , res){
 // Set the server port
 }).listen(1337);
 
+
+
+// Run The server_time updater.
+setInterval(function(){
+  server_time++;
+
+// Set the inverval to 5 minutes (5min*60sec*1000ms)
+},5*60*1000);
 
 
 
@@ -208,14 +224,21 @@ function serverAdmin(q){
   if(!checkParam("passwd", q)){
     ret = {"status":"Unauthorised Access"};
   } else {
-    if(q.passwd === "ilovevoyandeverythinghemakes_VOY4LIFE"){
-      ret.game = game;
-    } else {
+    if(q.passwd !== "ilovevoyandeverythinghemakes_VOY4LIFE"){
       ret = {"status":"Unauthorised Access"};
+    } else {
+
+      // Return the game object and the relative server timer;
+      ret.server_time = server_time;
+      ret.game = game;
     }
   }
 
 }
+
+
+
+
 
 
 
@@ -252,7 +275,10 @@ function joinGame(q){
     next: 1,
 
     // Do a check is the game finished
-    finished: false
+    finished: false,
+
+    //The relative server time when the game has started
+    start_time: null
   };
 
   // If games exists, check does user exist
@@ -287,6 +313,8 @@ function joinGame(q){
   // If no places are available to fill, make a new game
   gameObj.player[0].name = q.name;
   gameObj.player[0].id = game.curr_id++;
+  gameObj.start_time = server_time;
+
 
 
   // Add the new player to the game
