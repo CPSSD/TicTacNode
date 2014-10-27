@@ -16,7 +16,7 @@ var game = {
 };
 
 // Set the relative server time.
-var server_time;
+var server_time = 0;
 
 
 
@@ -26,7 +26,7 @@ var server_time;
 // Create the server
 http.createServer( function(req , res){
   // Respond with HTTP status 200 OK, and set the content-type to json
-  res.writeHead(200, {'Content-Type': 'application/json'});
+  res.writeHead(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'});
 
   // Parse the URL to get the GET requests
   var get = url.parse(req.url, true);
@@ -317,6 +317,7 @@ function joinGame(q){
   gameObj.player[0].name = q.name;
   gameObj.player[0].id = game.curr_id++;
   gameObj.start_time = server_time;
+  gameObj.last_move = server_time;
 
 
 
