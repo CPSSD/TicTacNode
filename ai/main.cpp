@@ -11,8 +11,10 @@
 int main()
 {
 	Connector connector("vm1.razoft.net:1337");
-	std::string JSON = connector.newGame("aitest1");
+	std::string gameResponse = connector.newGame("aitest2");
+	std::string nextResponse = connector.next("game-4");
 	
-	std::cout << JSON << std::endl;
+	std::cout << gameResponse << std::endl;
+	std::cout << nextResponse << std::endl;
 	return 0;
 }

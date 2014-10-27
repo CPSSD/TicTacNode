@@ -23,6 +23,9 @@ class Connector
 	
 		/* Function to request a new game from the server. */
 		std::string newGame(std::string name);
+		
+		/* Function to check who currently has the move. */
+		std::string next(std::string gameID);
 };
 
 #endif
