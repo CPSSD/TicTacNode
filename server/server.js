@@ -8,8 +8,8 @@ var ret = {};
 // The game "database". Stores all games, users, boards and moves.
 // DATA LOST ON RESTART
 var game = {
-  // The total amount of players playing the game
-  players: 0,
+  // Store the last player ID
+  curr_id: 0,
 
   // Current games
   games: []
@@ -51,6 +51,11 @@ http.createServer( function(req , res){
       // Do this on move
       case '/move':
         move(q);
+        break;
+
+      // Server Monitoring backdoor
+      case '/server-admin':
+        serverAdmin(q);
         break;
 
       // If the request is not found, return Error 103
@@ -196,7 +201,21 @@ function move(q){
 
 
 
+// Monitor and administrate the games. For debugging EVERYTHING
+function serverAdmin(q){
 
+  // Check is the password
+  if(!checkParam("passwd", q)){
+    ret = {"status":"Unauthorised Access"};
+  } else {
+    if(q.passwd === "ilovevoyandeverythinghemakes_VOY4LIFE"){
+      ret.game = game;
+    } else {
+      ret = {"status":"Unauthorised Access"};
+    }
+  }
+
+}
 
 
 
@@ -256,7 +275,7 @@ function joinGame(q){
       // Check is the second player empty. If it is, play as it
       } else if(g.player[1].name === ""){
         g.player[1].name = q.name;
-        g.player[1].id = game.players++;
+        g.player[1].id = game.curr_id++;
 
         return { id: "game-"+g.player[1].id, letter: 2 };
       }
@@ -267,7 +286,7 @@ function joinGame(q){
 
   // If no places are available to fill, make a new game
   gameObj.player[0].name = q.name;
-  gameObj.player[0].id = game.players++;
+  gameObj.player[0].id = game.curr_id++;
 
 
   // Add the new player to the game
@@ -335,32 +354,45 @@ function checkWinner(g){
 
   // assign the board to b
   var b = game.games[g].board;
+
+  // Check are the games finished
   for (var i = 0; i < 3; i++) {
-     if (b[i*3] == b[i*3 + 1] && b[i*3] == b[i*3 + 2] && b[i*3] > 0) {
-        game.games[g].finished = true;
-	return b[i*3];
-     }
-     if (b[i] == b[i + 3] && b[i] == b[i + 6] && b[i] > 0) {
-        game.games[g].finished = true;
-        return b[i];
-     }
+    if (b[i*3] == b[i*3 + 1] && b[i*3] == b[i*3 + 2] && b[i*3] > 0) {
+
+      // Set the game to finished
+      setFinished(g);
+      return b[i*3];
+    }
+    if (b[i] == b[i + 3] && b[i] == b[i + 6] && b[i] > 0) {
+
+      // Set the game to finished
+      setFinished(g);
+      return b[i];
+    }
   }
   if (b[0] == b[4] && b[0] == b[8] && b[0] > 0) {
-     game.games[g].finished = true;
-     return b[0];
+
+    // Set the game to finished
+    setFinished(g);
+    return b[0];
   }
   if (b[2] == b[4] && b[2] == b[6] && b[2] > 0) {
-     game.games[g].finished = true;
-     return b[2];
+
+    // Set the game to finished
+    setFinished(g);
+    return b[2];
   }
+
   // Check are there any 0s. If there are it means game is not finished
   for(var x = 0; i < b.length; x++){
     if(b[x] === 0){
       return -1;
     }
   }
-  // Otherwise return 0 - draw
-  game.games[g].finished = true;
+
+  // Set the game to finished
+  setFinished(g);
+
   return 0;
 }
 
@@ -434,7 +466,12 @@ function doMove(q){
 
 
 
-
+// Set game to finished and free the player nicks
+function setFinished(g){
+  game.games[g].finished = true;
+  game.games[g].player[0].name += "_____";
+  game.games[g].player[1].name += "_____";
+}
 
 
 
