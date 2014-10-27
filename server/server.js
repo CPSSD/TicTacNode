@@ -416,7 +416,7 @@ function checkWinner(g){
   }
 
   // Check are there any 0s. If there are it means game is not finished
-  for(var x = 0; i < b.length; x++){
+  for(var x = 0; x < b.length; x++){
     if(b[x] === 0){
       return -1;
     }
