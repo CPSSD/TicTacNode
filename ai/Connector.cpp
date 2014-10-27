@@ -49,3 +49,18 @@ std::string Connector::next(std::string gameID)
     
     return replyJSON;
 }
+
+std::string Connector::move(std::string gameID, std::string position)
+{
+	std::string replyJSON;
+	std::string requestAddress = address+"/move?id="+gameID+"&position="+position;
+	
+	curl_easy_setopt(curl, CURLOPT_URL, requestAddress.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &replyJSON);
+    curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
+    curl_easy_perform(curl);
+    curl_easy_reset(curl);
+    
+    return replyJSON;
+}

@@ -26,6 +26,9 @@ class Connector
 		
 		/* Function to check who currently has the move. */
 		std::string next(std::string gameID);
+		
+		/* Function to make a move on the board. */
+		std::string move(std::string gameID, std::string position);
 };
 
 #endif
