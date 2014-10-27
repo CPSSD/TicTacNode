@@ -8,17 +8,25 @@ var ret = {};
 // The game "database". Stores all games, users, boards and moves.
 // DATA LOST ON RESTART
 var game = {
-  // The total amount of players playing the game
-  players: 0,
+  // Store the last player ID
+  curr_id: 0,
 
   // Current games
   games: []
 };
 
+// Set the relative server time.
+var server_time = 0;
+
+
+
+
+
+
 // Create the server
 http.createServer( function(req , res){
   // Respond with HTTP status 200 OK, and set the content-type to json
-  res.writeHead(200, {'Content-Type': 'application/json'});
+  res.writeHead(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'});
 
   // Parse the URL to get the GET requests
   var get = url.parse(req.url, true);
@@ -53,6 +61,11 @@ http.createServer( function(req , res){
         move(q);
         break;
 
+      // Server Monitoring backdoor
+      case '/server-admin':
+        serverAdmin(q);
+        break;
+
       // If the request is not found, return Error 103
       default:
         err(103);
@@ -68,6 +81,14 @@ http.createServer( function(req , res){
 // Set the server port
 }).listen(1337);
 
+
+
+// Run The server_time updater.
+setInterval(function(){
+  server_time++;
+
+// Set the inverval to 5 minutes (5min*60sec*1000ms)
+},5*60*1000);
 
 
 
@@ -196,6 +217,27 @@ function move(q){
 
 
 
+// Monitor and administrate the games. For debugging EVERYTHING
+function serverAdmin(q){
+
+  // Check is the password
+  if(!checkParam("passwd", q)){
+    ret = {"status":"Unauthorised Access"};
+  } else {
+    if(q.passwd !== "ilovevoyandeverythinghemakes_VOY4LIFE"){
+      ret = {"status":"Unauthorised Access"};
+    } else {
+
+      // Return the game object and the relative server timer;
+      ret.server_time = server_time;
+      ret.game = game;
+    }
+  }
+
+}
+
+
+
 
 
 
@@ -233,7 +275,13 @@ function joinGame(q){
     next: 1,
 
     // Do a check is the game finished
-    finished: false
+    finished: false,
+
+    //The relative server time when the game has started
+    start_time: null,
+
+    // When was the last move
+    last_move: null
   };
 
   // If games exists, check does user exist
@@ -256,7 +304,7 @@ function joinGame(q){
       // Check is the second player empty. If it is, play as it
       } else if(g.player[1].name === ""){
         g.player[1].name = q.name;
-        g.player[1].id = game.players++;
+        g.player[1].id = game.curr_id++;
 
         return { id: "game-"+g.player[1].id, letter: 2 };
       }
@@ -267,7 +315,10 @@ function joinGame(q){
 
   // If no places are available to fill, make a new game
   gameObj.player[0].name = q.name;
-  gameObj.player[0].id = game.players++;
+  gameObj.player[0].id = game.curr_id++;
+  gameObj.start_time = server_time;
+  gameObj.last_move = server_time;
+
 
 
   // Add the new player to the game
@@ -335,32 +386,45 @@ function checkWinner(g){
 
   // assign the board to b
   var b = game.games[g].board;
+
+  // Check are the games finished
   for (var i = 0; i < 3; i++) {
-     if (b[i*3] == b[i*3 + 1] && b[i*3] == b[i*3 + 2] && b[i*3] > 0) {
-        game.games[g].finished = true;
-	return b[i*3];
-     }
-     if (b[i] == b[i + 3] && b[i] == b[i + 6] && b[i] > 0) {
-        game.games[g].finished = true;
-        return b[i];
-     }
+    if (b[i*3] == b[i*3 + 1] && b[i*3] == b[i*3 + 2] && b[i*3] > 0) {
+
+      // Set the game to finished
+      setFinished(g);
+      return b[i*3];
+    }
+    if (b[i] == b[i + 3] && b[i] == b[i + 6] && b[i] > 0) {
+
+      // Set the game to finished
+      setFinished(g);
+      return b[i];
+    }
   }
   if (b[0] == b[4] && b[0] == b[8] && b[0] > 0) {
-     game.games[g].finished = true;
-     return b[0];
+
+    // Set the game to finished
+    setFinished(g);
+    return b[0];
   }
   if (b[2] == b[4] && b[2] == b[6] && b[2] > 0) {
-     game.games[g].finished = true;
-     return b[2];
+
+    // Set the game to finished
+    setFinished(g);
+    return b[2];
   }
+
   // Check are there any 0s. If there are it means game is not finished
-  for(var x = 0; i < b.length; x++){
+  for(var x = 0; x < b.length; x++){
     if(b[x] === 0){
       return -1;
     }
   }
-  // Otherwise return 0 - draw
-  game.games[g].finished = true;
+
+  // Set the game to finished
+  setFinished(g);
+
   return 0;
 }
 
@@ -411,7 +475,8 @@ function doMove(q){
       // Try to make a move
       if(game.games[g].board[q.position] === 0){
 
-        //If successful, enter the position
+        //If successful, enter the position and update the timer
+        game.games[g].last_move = server_time;
         game.games[g].board[q.position] = l;
 
         // Change the next player to do a move
@@ -431,6 +496,16 @@ function doMove(q){
     }
   }
 }
+
+
+
+// Set game to finished and free the player nicks
+function setFinished(g){
+  game.games[g].finished = true;
+  game.games[g].player[0].name += "_____";
+  game.games[g].player[1].name += "_____";
+}
+
 
 
 
