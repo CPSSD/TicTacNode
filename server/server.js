@@ -502,8 +502,10 @@ function doMove(q){
 // Set game to finished and free the player nicks
 function setFinished(g){
   game.games[g].finished = true;
-  game.games[g].player[0].name += "_____";
-  game.games[g].player[1].name += "_____";
+  if(game.games[g].player[0].name.substr(-5) !== "_____"){
+    game.games[g].player[0].name += "_____";
+    game.games[g].player[1].name += "_____";
+  }
 }
 
 
