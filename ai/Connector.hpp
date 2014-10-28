@@ -5,8 +5,6 @@
 #define CONNECTOR_H
 
 #include <string>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <curl/curl.h>
 
 class Connector
