@@ -7,5 +7,5 @@ AI program for the TicTacNode project.
 
 From the source directory, compile with:
 ```
-g++ ./*.cpp -Wall -lboost_system -lcurl -o ./main
+g++ ./*.cpp -Wall -std=c++11 -lboost_system -lboost_thread -lcurl -o ./main
 ```

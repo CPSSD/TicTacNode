@@ -3,32 +3,34 @@
 
 #include <iostream>
 #include <string>
+#include <ctime>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/thread/thread.hpp>
 #include <curl/curl.h>
 #include "Connector.hpp"
 #include "Response.hpp"
+#include "AI.hpp"
 
 int main()
 {
+	srand(time(NULL));
+	
 	Connector connector("vm1.razoft.net:1337");
-	std::string gameString = connector.newGame("aitest2");
-	std::string nextString = connector.next("game-1827");
+	AI colin;
+	colin.newGame(connector);
 	
-	Response gameResponse(gameString);
-	std::cout << gameResponse.status << std::endl;
-	std::cout << gameResponse.id << std::endl;
-	std::cout << gameResponse.letter << std::endl;
-	std::cout << std::endl;
-	
-	Response nextResponse(nextString);
-	std::cout << nextResponse.status << std::endl;
-	std::cout << nextResponse.errorCode << std::endl;
-	for(unsigned int i = 0; i < nextResponse.board.size(); i++) {
-		std::cout << nextResponse.board[i];
+	while(colin.winner(connector) == -1) {
+		int currentPlayer = colin.next(connector);
+		if(currentPlayer != colin.getLetter() && currentPlayer != 0) {
+			boost::this_thread::sleep(boost::posix_time::seconds(1));
+		} else if(currentPlayer == colin.getLetter()) {
+			colin.move(connector);
+		}
 	}
-	std::cout << std::endl;
-	std::cout << nextResponse.turn << std::endl;
+	if(colin.winner(connector) == 0) std::cout << "The game is a draw!" << std::endl;
+	else if(colin.winner(connector) == colin.getLetter()) std::cout << "Colin won!" << std::endl;
+	else if(colin.winner(connector) != colin.getLetter()) std::cout << "Colin lost!" << std::endl;
 	
 	return 0;
 }
