@@ -13,6 +13,7 @@ class AI
 {
 	private:
 		int letter;	// 1=X, 2=O
+		int oppLetter;	// Tracks opponent's letter
 		std::string gameID;	// ID of the current game
 		std::vector<int> board;	// The current game board
 	
@@ -28,8 +29,11 @@ class AI
 		// Check whose move it is.
 		int next(Connector& connector);
 		
-		// Make a move. Returns move number.
-		int move(Connector& connector);
+		// Decide on a move.
+		int chooseMove();
+		
+		// Send a move to the server.
+		void move(Connector& connector, int move);
 };
 
 #endif
