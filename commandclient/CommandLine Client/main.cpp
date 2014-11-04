@@ -1,8 +1,11 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/thread/thread.hpp>
 #include <boost/foreach.hpp>
 #include <iostream>
 #include <sstream>
+#define CURL_STATICLIB
+#include <curl/curl.h>
 #include <string>
 #include <vector>
 
@@ -128,29 +131,25 @@ jsonObject processJson(string x)
     return ret;
 }
 
-string exec(char* cmd)
+CURL* curl = curl_easy_init();
+
+size_t writeCallback(char* ptr, size_t size, size_t nmemb, void* data)
 {
-    FILE* pipe = popen(cmd, "r");
-    if (!pipe) return "ERROR";
-    char buffer[128];
-    std::string result = "";
-    while(!feof(pipe)) {
-    	if(fgets(buffer, 128, pipe) != NULL)
-    		result += buffer;
-    }
-    pclose(pipe);
-    return result;
+	((std::string*)data)->append((char*)ptr, size * nmemb);
+	return size * nmemb;
 }
 
 string getData(string host, string action, string params)
 {
-    string command = "curl ";
-    command = command + "\"" + host + '/' + action + '?' + params + "\" -s ";
-    char arr[command.length()];
-    for (int i = 0; i < command.length(); i++) {
-        arr[i] = command[i];
-    }
-    return exec(arr);
+    string requestAddress = host + '/' + action + '?' + params;
+    string replyJSON;
+	curl_easy_setopt(curl, CURLOPT_URL, requestAddress.c_str());
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &replyJSON);
+	curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
+	curl_easy_perform(curl);
+	curl_easy_reset(curl);
+    return replyJSON;
 }
 
 void handleError(jsonObject x)
@@ -249,7 +248,7 @@ void startGame(string name)
                     } else {
                         handleError(response);
                     }
-                    Sleep(2000);
+                    boost::this_thread::sleep(boost::posix_time::seconds(1));
                 }
             }
         }
