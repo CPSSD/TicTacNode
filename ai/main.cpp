@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <stdexcept>
+#include <cstdlib>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/thread/thread.hpp>
@@ -12,13 +14,24 @@
 #include "Response.hpp"
 #include "AI.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
 	srand(time(NULL));
+	std::string host;
+	if(argc > 1) {
+		host = argv[1];
+	} else {
+		host = "vm1.razoft.net:1337";
+	}
 	
-	Connector connector("vm1.razoft.net:1337");
+	Connector connector(host);
 	AI colin;
-	colin.newGame(connector);
+	try {
+		colin.newGame(connector);
+	} catch(std::runtime_error re) {
+		std::cerr << "Error connecting to server: " << re.what() << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
 	
 	while(colin.winner(connector) == -1) {
 		int currentPlayer = colin.next(connector);
