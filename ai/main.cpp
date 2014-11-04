@@ -25,7 +25,8 @@ int main()
 		if(currentPlayer != colin.getLetter() && currentPlayer != 0) {
 			boost::this_thread::sleep(boost::posix_time::seconds(1));
 		} else if(currentPlayer == colin.getLetter()) {
-			colin.move(connector);
+			int move = colin.chooseMove();
+			colin.move(connector, move);
 		}
 	}
 	if(colin.winner(connector) == 0) std::cout << "The game is a draw!" << std::endl;
