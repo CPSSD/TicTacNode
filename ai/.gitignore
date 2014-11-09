@@ -1,1 +1,4 @@
 colin
+Makefile.am
+configure.ac
+src/Makefile.am
