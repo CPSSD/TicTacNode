@@ -14,9 +14,9 @@ int AI::getLetter()
 	return letter;
 }
 
-void AI::newGame(Connector& connector)
+void AI::newGame(Connector& connector, std::string name)
 {
-	std::string responseString = connector.newGame("Colin");
+	std::string responseString = connector.newGame(name);
 	std::cout << responseString << std::endl;
 	Response response(responseString);
 	if(response.status == "error") {

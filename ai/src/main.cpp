@@ -18,16 +18,25 @@ int main(int argc, char* argv[])
 {
 	srand(time(NULL));
 	std::string host;
+	std::string name;
 	if(argc > 1) {
 		host = argv[1];
 	} else {
 		host = "vm1.razoft.net:1337";
 	}
+	if(argc > 2) {
+		name = argv[2];
+		if(name.size() == 0) {
+			name = "ColinAI";
+		}
+	} else {
+		name = "ColinAI";
+	}
 	
 	Connector connector(host);
 	AI colin;
 	try {
-		colin.newGame(connector);
+		colin.newGame(connector, name);
 	} catch(std::runtime_error re) {
 		std::cerr << "Error connecting to server: " << re.what() << std::endl;
 		std::exit(EXIT_FAILURE);

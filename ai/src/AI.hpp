@@ -21,7 +21,7 @@ class AI
 		int getLetter();
 		
 		// Start a new game on the server.
-		void newGame(Connector& connector);
+		void newGame(Connector& connector, std::string name);
 		
 		// Check if the game is over.
 		int winner(Connector& connector);
