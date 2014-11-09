@@ -78,7 +78,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = ai$(EXEEXT)
+bin_PROGRAMS = tictacnode_ai$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp
@@ -95,18 +95,20 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_ai_OBJECTS = main.$(OBJEXT) Connector.$(OBJEXT) AI.$(OBJEXT) \
-	Response.$(OBJEXT)
-ai_OBJECTS = $(am_ai_OBJECTS)
+am_tictacnode_ai_OBJECTS = main.$(OBJEXT) Connector.$(OBJEXT) \
+	AI.$(OBJEXT) Response.$(OBJEXT)
+tictacnode_ai_OBJECTS = $(am_tictacnode_ai_OBJECTS)
 am__DEPENDENCIES_1 =
-ai_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+tictacnode_ai_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-ai_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(ai_LDFLAGS) $(LDFLAGS) -o $@
+tictacnode_ai_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(tictacnode_ai_LDFLAGS) $(LDFLAGS) \
+	-o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -159,8 +161,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(ai_SOURCES)
-DIST_SOURCES = $(ai_SOURCES)
+SOURCES = $(tictacnode_ai_SOURCES)
+DIST_SOURCES = $(tictacnode_ai_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -316,9 +318,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CXXFLAGS = -Wall -std=c++11 $(BOOST_CPPFLAGS)
-ai_SOURCES = main.cpp Connector.hpp Connector.cpp AI.hpp AI.cpp Response.hpp Response.cpp
-ai_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
-ai_LDADD = $(BOOST_THREAD_LIBS) $(BOOST_SYSTEM_LIBS) -lcurl
+tictacnode_ai_SOURCES = main.cpp Connector.hpp Connector.cpp AI.hpp AI.cpp Response.hpp Response.cpp
+tictacnode_ai_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
+tictacnode_ai_LDADD = $(BOOST_THREAD_LIBS) $(BOOST_SYSTEM_LIBS) -lcurl
 all: all-am
 
 .SUFFIXES:
@@ -403,9 +405,9 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-ai$(EXEEXT): $(ai_OBJECTS) $(ai_DEPENDENCIES) $(EXTRA_ai_DEPENDENCIES) 
-	@rm -f ai$(EXEEXT)
-	$(AM_V_CXXLD)$(ai_LINK) $(ai_OBJECTS) $(ai_LDADD) $(LIBS)
+tictacnode_ai$(EXEEXT): $(tictacnode_ai_OBJECTS) $(tictacnode_ai_DEPENDENCIES) $(EXTRA_tictacnode_ai_DEPENDENCIES) 
+	@rm -f tictacnode_ai$(EXEEXT)
+	$(AM_V_CXXLD)$(tictacnode_ai_LINK) $(tictacnode_ai_OBJECTS) $(tictacnode_ai_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

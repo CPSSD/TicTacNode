@@ -13,7 +13,8 @@ In a POSIX shell, run the following commands from the directory in which this RE
 ./configure
 make
 ```
-This will compile a binary called "ai" in the src subdirectory. If you wish to be able to run this AI 
+This will compile a binary called "tictacnode_ai" in the src subdirectory. If you wish to be able to 
+run this AI 
 from anywhere in your shell, then run the command:
 ```
 sudo make install
@@ -23,7 +24,7 @@ from the same directory after running the previous two commands.
 ###Usage:
 The AI is run from the command line as follows:
 ```
-ai [hostname] [ai_name]
+tictacnode_ai [hostname] [ai_name]
 ```
 
 The hostname is an optional argument which takes a URL pointing to an instance of the TicTacNode 
