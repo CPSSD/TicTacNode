@@ -15,6 +15,8 @@ var game = {
   games: []
 };
 
+exports.game = game;
+
 // Set the relative server time.
 var server_time = 0;
 
@@ -427,7 +429,7 @@ function checkWinner(g){
 
   return 0;
 }
-
+exports.checkWinner = checkWinner;
 
 // Function to check are the request parameters ok
 function checkParam(param, q){
@@ -496,7 +498,7 @@ function doMove(q){
     }
   }
 }
-
+exports.doMove = doMove;
 
 
 // Set game to finished and free the player nicks
@@ -507,12 +509,6 @@ function setFinished(g){
     game.games[g].player[1].name += "_____";
   }
 }
-
-
-
-
-
-
 
 
 
@@ -553,3 +549,5 @@ function err(c){
       break;
   }
 }
+
+exports.err = err;
