@@ -200,6 +200,12 @@ void startGame(string name)
         int player = response.letter;
         int wMove = 1;
         int board[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        serverResponse = getData("vm1.razoft.net:1337", "next", "id=" + id);
+        response = processJson(serverResponse);
+        wMove = response.turn;
+        for (int i = 0; i < 9; i++) {
+        	board[i] = response.board[i];
+        }
         cout << "Game started, you are playing as " << getXOFromInt(player) << endl;
         if (player == 2) {
             cout << "Waiting for other player to move" << endl;
