@@ -11,6 +11,8 @@
 
 using namespace std;
 
+string host = "cpssd4-web.computing.dcu.ie:80/";
+
 char boardChar(int x, char def)
 {
     if (x == 2) {
@@ -139,7 +141,7 @@ size_t writeCallback(char* ptr, size_t size, size_t nmemb, void* data)
 	return size * nmemb;
 }
 
-string getData(string host, string action, string params)
+string getData(string action, string params)
 {
     string requestAddress = host + '/' + action + '?' + params;
     string replyJSON;
@@ -193,14 +195,14 @@ int getOppsite(int x)
 
 void startGame(string name)
 {
-    string serverResponse = getData("vm1.razoft.net:1337", "newGame", "name=" + name);
+    string serverResponse = getData("newGame", "name=" + name);
     jsonObject response = processJson(serverResponse);
     if (response.status == "okay") {
         string id = response.id;
         int player = response.letter;
         int wMove = 1;
         int board[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-        serverResponse = getData("vm1.razoft.net:1337", "next", "id=" + id);
+        serverResponse = getData("next", "id=" + id);
         response = processJson(serverResponse);
         wMove = response.turn;
         for (int i = 0; i < 9; i++) {
@@ -223,7 +225,7 @@ void startGame(string name)
                         cin >> m;
                         if (validMove(board, m - 1)) {
                             board[m - 1] = player;
-                            serverResponse = getData("vm1.razoft.net:1337", "move", "id=" + id + "&position=" + toChar(m - 1));
+                            serverResponse = getData("move", "id=" + id + "&position=" + toChar(m - 1));
                             response = processJson(serverResponse);
                             if (response.status != "okay") {
                                 handleError(response);
@@ -237,7 +239,7 @@ void startGame(string name)
                         }
                     }
                 } else {
-                    serverResponse = getData("vm1.razoft.net:1337", "next", "id=" + id);
+                    serverResponse = getData("next", "id=" + id);
                     response = processJson(serverResponse);
                     if (response.status == "okay") {
                         if (response.winner >= 0) {
@@ -286,19 +288,13 @@ void playGames()
 
 int main()
 {
-    playGames();
-    return 0;
-    int board[] = {1, 0, 0, 1, 0, 0, 1, 0, 0};
-    cout << getData("vm1.razoft.net:1337", "next", "id=game-0") << endl;
-    cout << getWinner(board) << endl;
-    printBoard(board, false);
-    jsonObject x = processJson("{\"status\":\"okay\",\"board\":[0,0,0,1,0,0,0,1,0],\"turn\":1}");
-    cout << "Json Example : " << endl;
-    cout << x.status << endl;
-    cout << x.turn << endl;
-    cout << "board : " << endl;
-    for (int i = 0; i < 9; i++) {
-        cout << x.board[i] << endl;
+    cout << "Would you like to use the defualt host (" << host << ") or enter an alternitive? y/n" << endl;
+    char a;
+    cin >> a;
+    if (a == 'n') {
+    	cout << "Enter host name :" << endl;
+    	cin >> host;
     }
+    playGames();
     return 0;
 }
