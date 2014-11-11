@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 	if(argc > 1) {
 		host = argv[1];
 	} else {
-		host = "vm1.razoft.net:1337";
+		host = "cpssd4-web.computing.dcu.ie:80";
 	}
 	if(argc > 2) {
 		name = argv[2];
