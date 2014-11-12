@@ -93,6 +93,19 @@ void finishgame(string p1, string p2)
     getData("move?id=" + p1 + "&position=7");
 }
 
+void drawgame(string p1, string p2)
+{
+     getData("move?id=" + p1 + "&position=0");
+     getData("move?id=" + p2 + "&position=1");
+     getData("move?id=" + p1 + "&position=2");
+     getData("move?id=" + p2 + "&position=4");
+     getData("move?id=" + p1 + "&position=7");
+     getData("move?id=" + p2 + "&position=6");
+     getData("move?id=" + p1 + "&position=8");
+     getData("move?id=" + p2 + "&position=5");
+     getData("move?id=" + p1 + "&position=3");
+}
+
 void testServer()
 {
     string serverResponse = getData("");
@@ -188,6 +201,20 @@ void testServer()
         cout << "next request winning game : Passed" << endl;
     } else {
         cout << "next request winning game : Failed" << endl;
+    }
+    serverResponse = getData("newGame?name=test4");
+    response = processJson(serverResponse);
+    gameid = response.id;
+    serverResponse = getData("newGame?name=test5");
+    response = processJson(serverResponse);
+    gameid2 = response.id;
+    drawgame(gameid, gameid2);
+    serverResponse = getData("next?id=" + gameid);
+    response = processJson(serverResponse);
+    if (response.status == "okay" and response.winner == 0) {
+        cout << "next request drawing game : Passed" << endl;
+    } else {
+        cout << "next request drawing game : Failed" << endl;
     }
 }
 
