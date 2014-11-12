@@ -120,7 +120,7 @@ void testServer()
     response = processJson(serverResponse);
     string gameid = response.id;
     string gameid2;
-    string turn = response.letter;
+    int turn = response.letter;
     if (response.status == "okay" and (response.letter == 1 or response.letter == 2)) {
         cout << "newGame request : Passed" << endl;
     } else {
