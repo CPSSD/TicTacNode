@@ -87,10 +87,10 @@ string getData(string request)
 
 void finishgame(string p1, string p2)
 {
-    getData("move?id=" + gameid2 + "&position=5");
-    getData("move?id=" + gameid + "&position=1");
-    getData("move?id=" + gameid2 + "&position=0");
-    getData("move?id=" + gameid + "&position=7");
+    getData("move?id=" + p2 + "&position=5");
+    getData("move?id=" + p1 + "&position=1");
+    getData("move?id=" + p2 + "&position=0");
+    getData("move?id=" + p1 + "&position=7");
 }
 
 void testServer()
