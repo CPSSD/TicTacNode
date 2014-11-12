@@ -4,7 +4,7 @@ var main = require('./server.js');
 var http = require('http');
 var request = require('request');
 
-var errors = ["Other Error", "Missing parameter in request", "Unknown parameter in request", "Unknown request", "Server not ready or busy", "Not players turn", "Invalid move"];
+var errors = ["Other error", "Missing parameter in request", "Unknown parameter in request", "Unknown request", "Server not ready or busy", "Not players turn", "Invalid move"];
 
 describe('Test Suite', function(){
   describe('Error Handling', function(){
