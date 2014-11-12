@@ -1,7 +1,7 @@
 // Include neccessary packages
 var http = require('http'),
     url = require('url');
-    config = require('./config.json')
+    config = require('./config.json');
 
 // Declare the return object. Global as functions use it
 var ret = {};
