@@ -522,7 +522,7 @@ function err(c){
   ret.code = c;
   switch(c){
     case 100:
-      ret.message = "Other Error";
+      ret.message = "Other error";
       break;
 
     case 101:
