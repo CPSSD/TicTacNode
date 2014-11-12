@@ -34,15 +34,12 @@ http.createServer( function(req , res){
   // Parse the URL to get the GET requests
   var get = url.parse(req.url, true);
 
-  // Accepted Requests
-  var acc_req = ["/newGame", "/move", "/next"];
-
   // Declare the query and pathname
   var q = get.query,
       p = get.pathname;
 
   // Check is the action given
-  if(p === "/" || (acc_req.indexOf(p) === -1)){
+  if(p === "/" || (config.authorised_requests.indexOf(p) === -1)){
     err(103);
 
   // Check are any parameters specified
@@ -68,7 +65,7 @@ http.createServer( function(req , res){
         break;
 
       // Server Monitoring backdoor
-      case '/server-admin':
+      case '/serverAdmin':
         serverAdmin(q);
         break;
 
