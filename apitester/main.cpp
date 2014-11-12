@@ -174,13 +174,20 @@ void testServer()
     } else {
         cout << "move request with valid move : Failed" << endl;
     }
+    serverResponse = getData("next?id=" + gameid);
+    response = processJson(serverResponse);
+    if (response.status == "okay" and response.turn == 2) {
+        cout << "next request valid : Passed" << endl;
+    } else {
+        cout << "next request valid : Failed" << endl;
+    }
     finishgame(gameid, gameid2);
     serverResponse = getData("next?id=" + gameid);
     response = processJson(serverResponse);
     if (response.status == "okay" and response.winner == 1) {
-        cout << "Next request winning game : Passed" << endl;
+        cout << "next request winning game : Passed" << endl;
     } else {
-        cout << "Next request winning game : Failed" << endl;
+        cout << "next request winning game : Failed" << endl;
     }
 }
 
