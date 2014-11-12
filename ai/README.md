@@ -11,7 +11,7 @@ installing Homebrew (http://brew.sh/), as it will make installing dependencies m
 
 If you are compiling from the source (i.e. not from the primary release package) please see "Compiling from Source" below.
 
-First extract the tar.gz archive, then, in a POSIX shell, run the following commands from the directory in which this README is located:
+In a POSIX shell, run the following commands from the directory in which this README is located:
 ```bash
 $ ./configure
 $ make
