@@ -85,7 +85,7 @@ http.createServer( function(req , res){
   ret = {};
 
 // Set the server port
-}).listen(1337);
+}).listen(config.port);
 
 
 
