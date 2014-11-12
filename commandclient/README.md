@@ -21,5 +21,4 @@ The command line client is run from the command line as follows:
 $ ./cmdclient
 ```
 
-.
-The program will ask you if you want to use the default host or change to a different host. Press y to use the default host cpssd4-web.computing.dcu.ie:80/
+The program will ask you if you want to use the default host or change to a different host. Press y to use the default host cpssd4-web.computing.dcu.ie:80/ and n to use an alternitive host.
