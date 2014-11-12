@@ -5,8 +5,9 @@ AI program for the TicTacNode project.
 
 ###Compiling Instructions:
 This project requires libcurl, Boost::Thread, Boost::PropertyTree, and Boost::Foreach. On Mac OSX and 
-Linux these can be installed from your package manager. On Windows, compilation requires MinGW. Please 
-consult the MinGW documentation for information on how to install and register the required libraries.
+Linux these can be installed from your package manager. If, on OSX, you do not have a package manager, we recommend 
+installing Homebrew (http://brew.sh/), as it will make installing dependencies much easier.
+ Support is not currently available for Windows.
 
 If you are compiling from the source as presented in the master branch (i.e. not in an official release), please see "Compiling from Pure Source" below.
 
