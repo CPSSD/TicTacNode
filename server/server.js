@@ -1,6 +1,7 @@
 // Include neccessary packages
 var http = require('http'),
     url = require('url');
+    config = require('./config.json');
 
 // Declare the return object. Global as functions use it
 var ret = {};
@@ -9,7 +10,7 @@ var ret = {};
 // DATA LOST ON RESTART
 var game = {
   // Store the last player ID
-  curr_id: 0,
+  curr_id: 1,
 
   // Current games
   games: []
@@ -33,12 +34,15 @@ http.createServer( function(req , res){
   // Parse the URL to get the GET requests
   var get = url.parse(req.url, true);
 
+  // Accepted Requests
+  var acc_req = ["/newGame", "/move", "/next"];
+
   // Declare the query and pathname
   var q = get.query,
       p = get.pathname;
 
   // Check is the action given
-  if(p === "/"){
+  if(p === "/" || (acc_req.indexOf(p) === -1)){
     err(103);
 
   // Check are any parameters specified
