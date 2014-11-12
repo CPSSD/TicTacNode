@@ -42,3 +42,20 @@ Start the server using forever to daemonize the server
 ## Stopping the server
 
 `forever stop TicTacNode`
+
+## Unit Testing
+
+Install unit.js using npm.
+
+`npm install unit.js`
+
+Install mocha.
+
+`npm install -g mocha`
+
+Install the request module.
+
+`npm install request`
+
+The unit tests can now be run using this command.
+`mocha test.js`
