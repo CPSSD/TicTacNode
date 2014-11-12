@@ -44,7 +44,7 @@ $ tictacnode_ai [hostname] [ai_name]
 
 The hostname is an optional argument which takes a URL pointing to an instance of the TicTacNode 
 server. If no port number is supplied, it will default to 80. If left blank, the host will default to 
-"vm1.razoft.net:1337".
+"cpssd4-web.copmuting.dcu.ie:80".
 
 The ai_name is another optional argument which takes a string saying the name you wish the AI to use 
 when connecting to the server. If no name is supplied, it will default to "ColinAI".
