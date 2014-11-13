@@ -9,7 +9,7 @@ Linux these can be installed from your package manager. If, on OSX, you do not h
 installing Homebrew (http://brew.sh/), as it will make installing dependencies much easier.
  Support is not currently available for Windows.
 
-If you are compiling from the source (i.e. not from the primary release package) please see "Compiling from Source" below.
+If you do not see a file called "configure" in the AI directory, please see "Compiling with Autotools" below.
 
 In a POSIX shell, run the following commands from the directory in which this README is located:
 ```bash
