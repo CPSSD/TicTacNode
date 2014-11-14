@@ -42,7 +42,7 @@ describe('Test Suite', function(){
           request.get('http://localhost:1337/newGame?name=test2');
       });
       it('next', function() {
-          request.get('http://localhost:1337/next?id=game-0',  function (err, res, body){
+          request.get('http://localhost:1337/next?id=game-1',  function (err, res, body){
               var myObject = JSON.parse(body);
               test.must(myObject.status).equal('okay');
               test.assert(myObject.turn == 1 || myObject.turn == 2);
@@ -51,7 +51,7 @@ describe('Test Suite', function(){
           });
       });
       it('move', function() {
-          request.get('http://localhost:1337/move?id=game-0&position=1',  function (err, res, body){
+          request.get('http://localhost:1337/move?id=game-1&position=1',  function (err, res, body){
               var myObject = JSON.parse(body);
               test.must(myObject.status).equal('okay');
               test.must(Object.getOwnPropertyNames(myObject).length == 1);
@@ -85,25 +85,25 @@ describe('Test Suite', function(){
          test.assert(main.doMove({id : 'game-1000', position : 1}) == -1);
       });
       it('Game finished', function() {
-         test.assert(main.doMove({id : 'game-0', postion : 1}) == 0);
+         test.assert(main.doMove({id : 'game-1', position : 1}) == 0);
       });
       it('Not players move', function() {
          main.game.games[0].board = [0, 0, 0, 0, 1, 0, 0, 0, 0];
          main.game.games[0].finished = false;
          main.game.games[0].next = 2;
-         test.assert(main.doMove({id : 'game-0', position : 1}) == 1);
+         test.assert(main.doMove({id : 'game-1', position : 1}) == 1);
       });
       it('Space occupied', function() {
          main.game.games[0].board = [0, 0, 0, 0, 1, 0, 0, 0, 0];
          main.game.games[0].finished = false;
          main.game.games[0].next = 2;
-         test.assert(main.doMove({id : 'game-1', position : 4}) == 0);
+         test.assert(main.doMove({id : 'game-2', position : 4}) == 0);
       });
       it('Sucess', function() {
          main.game.games[0].board = [0, 0, 0, 0, 1, 0, 0, 0, 0];
          main.game.games[0].finished = false;
          main.game.games[0].next = 2;
-         test.assert(main.doMove({id : 'game-1', position : 1}) == 2);
+         test.assert(main.doMove({id : 'game-2', position : 1}) == 2);
       });
   });
 });
