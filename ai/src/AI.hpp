@@ -9,6 +9,13 @@
 #include "Connector.hpp"
 #include "Response.hpp"
 
+/**
+ * @class AI
+ * @brief A class containing the actual logic of the AI.
+ * 
+ * The class will send requests through the connector to the server. It 
+ * will also decide what moves to make.
+ */
 class AI
 {
 	private:
@@ -20,7 +27,16 @@ class AI
 	public:
 		int getLetter();
 		
-		// Start a new game on the server.
+		/**
+		 * @fn newGame
+		 * @brief Requests a new game from the server.
+		 * 
+		 * The function sends a request for a new game to the server and 
+		 * parses the response.
+		 * 
+		 * @param connector  An object of the @c Connector class.
+		 * @param name  A string representing the AI's player name.
+		 */
 		void newGame(Connector& connector, std::string name);
 		
 		// Check if the game is over.
