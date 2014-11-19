@@ -289,6 +289,16 @@ bool validPin(string pin)
     return true;
 }
 
+string convertSpaces(string x)
+{
+    for (int i = 0; i < x.length(); i++) {
+        if (x[i] == ' ') {
+            x[i] = '+';
+        }
+    }
+    return x;
+}
+
 string getGameRequest()
 {
     cout << "Please enter a game description : " << endl;
@@ -345,6 +355,13 @@ struct gameObject
     int isPrivate;
 };
 
+vector<gameObject> getGames(boost::property_tree::ptree pt)
+{
+    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, pt.get_child("games")) {
+        r.push_back(v.second.get_value<int>());
+    }
+}
+
 void listGames(string name)
 {
     string serverResponse = getData("/listGames");
@@ -352,6 +369,14 @@ void listGames(string name)
     ss << serverResponse;
     boost::property_tree::ptree pt;
     boost::property_tree::read_json(ss, pt);
+    string status = pt.get("status", "");
+    string message = pt.get("message", "");
+    int code = pt.get("code", 0);
+    if (status == "okay") {
+        vector<gameObject> games = getGames(pt);
+    } else {
+        cout << "Got error : " << code << " , " << message << endl;
+    }
 }
 
 void playGames()
