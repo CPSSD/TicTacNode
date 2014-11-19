@@ -11,6 +11,8 @@
 
 using namespace std;
 
+string host = "cpssd4-web.computing.dcu.ie:80/";
+
 char boardChar(int x, char def)
 {
     if (x == 2) {
@@ -80,12 +82,13 @@ bool validMove(int board[9], int pos)
     return false;
 }
 
-struct jsonObject
+struct generalRequest
 {
     string status;
     int code;
     string message;
     string id;
+    string secret;
     int letter;
     int board[9];
     int turn;
@@ -113,17 +116,18 @@ void getBoard(int b[9], boost::property_tree::ptree pt)
     }
 }
 
-jsonObject processJson(string x)
+generalRequest processJson(string x)
 {
     stringstream ss;
     ss << x;
     boost::property_tree::ptree pt;
     boost::property_tree::read_json(ss, pt);
-    jsonObject ret;
+    generalRequest ret;
     ret.status = pt.get("status", "");
     ret.code = pt.get("code", 0);
     ret.message = pt.get("message", "");
     ret.id = pt.get("id", "");
+    ret.secret = pt.get("secret", "");
     ret.letter = pt.get("letter", 0);
     getBoard(ret.board, pt);
     ret.turn = pt.get("turn", 0);
@@ -139,9 +143,9 @@ size_t writeCallback(char* ptr, size_t size, size_t nmemb, void* data)
 	return size * nmemb;
 }
 
-string getData(string host, string action, string params)
+string getData(string request)
 {
-    string requestAddress = host + '/' + action + '?' + params;
+    string requestAddress = host + request;
     string replyJSON;
 	curl_easy_setopt(curl, CURLOPT_URL, requestAddress.c_str());
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
@@ -152,7 +156,7 @@ string getData(string host, string action, string params)
     return replyJSON;
 }
 
-void handleError(jsonObject x)
+void handleError(generalRequest x)
 {
     cout << "status : " << x.status << endl;
     if (x.code > 0) {
@@ -191,70 +195,106 @@ int getOppsite(int x)
     return 1;
 }
 
-void startGame(string name)
+bool makeMove(int board[9], string secret)
 {
-    string serverResponse = getData("vm1.razoft.net:1337", "newGame", "name=" + name);
-    jsonObject response = processJson(serverResponse);
-    if (response.status == "okay") {
-        string id = response.id;
-        int player = response.letter;
-        int wMove = 1;
-        int board[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-        cout << "Game started, you are playing as " << getXOFromInt(player) << endl;
-        if (player == 2) {
+    cout << "It is your turn, select a move to make or enter 10 to end the game : " << endl;
+    printBoard(board, true);
+    int m;
+    while (true) {
+        cin >> m;
+        if (validMove(board, m - 1)) {
+            board[m - 1] = player;
+            serverResponse = getData("/move?secret=" + secret + "&position=" + toChar(m - 1));
+            response = processJson(serverResponse);
+                if (response.status != "okay") {
+                    handleError(response);
+                }
+            printBoard(board, false);
             cout << "Waiting for other player to move" << endl;
+            return true;
+        } else if (m == 10) {
+            serverResponse = getData("/endGame?secret=" + secret);
+            response = processJson(serverResponse);
+            if (response.status != "okay") {
+                handleError(response);
+            }
+            return false;
+        } else {
+            cout << "Invalid Move" << endl;
         }
-        while (true) {
+    }
+}
+
+int tryNext(int board[9], string secret)
+{
+    serverResponse = getData("/next?secret=" + secret);
+    response = processJson(serverResponse);
+    if (response.status == "okay") {
+        if (response.winner >= 0) {
+            handleWinner(player, response.winner);
+            return 3;
+        } else {
+            if (response.turn == player) {
+                for (int i = 0; i < 9; i++) {
+                    board[i] = response.board[i];
+                }
+                return 2;
+            } else {
+                boost::this_thread::sleep(boost::posix_time::seconds(1));
+                return 1;
+            }
+        }
+    } else {
+        handleError(response);
+        boost::this_thread::sleep(boost::posix_time::seconds(1));
+        return 1;
+    }
+}
+
+void runGame(int board[9], int wMove, string secret)
+{
+    while (true) {
             if (getWinner(board) >= 0) {
                 handleWinner(player, getWinner(board));
                 break;
             } else {
                 if (wMove == player) {
-                    cout << "It is your turn, select a move to make : " << endl;
-                    printBoard(board, true);
-                    int m;
-                    while (true) {
-                        cin >> m;
-                        if (validMove(board, m - 1)) {
-                            board[m - 1] = player;
-                            serverResponse = getData("vm1.razoft.net:1337", "move", "id=" + id + "&position=" + toChar(m - 1));
-                            response = processJson(serverResponse);
-                            if (response.status != "okay") {
-                                handleError(response);
-                            }
-                            wMove = getOppsite(wMove);
-                            printBoard(board, false);
-                            cout << "Waiting for other player to move" << endl;
-                            break;
-                        } else {
-                            cout << "Invalid Move" << endl;
-                        }
+                    bool moveMade = makeMove(board, secret);
+                    if (moveMade == false) {
+                        return;
                     }
+                    wMove = getOppsite(wMove);
                 } else {
-                    serverResponse = getData("vm1.razoft.net:1337", "next", "id=" + id);
-                    response = processJson(serverResponse);
-                    if (response.status == "okay") {
-                        if (response.winner >= 0) {
-                            handleWinner(player, response.winner);
-                            break;
-                        } else {
-                            if (response.turn == player) {
-                                wMove = player;
-                                for (int i = 0; i < 9; i++) {
-                                    board[i] = response.board[i];
-                                }
-                            }
-                        }
-                    } else {
-                        handleError(response);
+                    int meNext = tryNext(board, secret);
+                    if (meNext == 2) {
+                        wMove = getOppsite(wMove);
+                    } else if (meNext == 3) {
+                        return;
                     }
-                    boost::this_thread::sleep(boost::posix_time::seconds(1));
                 }
             }
         }
+}
+
+void startGame(string name)
+{
+    string serverResponse = getData("/startGame?name=" + name);
+    generalRequest response = processJson(serverResponse);
+    if (response.status == "okay") {
+        string secret = response.secret;
+        int player = response.letter;
+        cout << "Started game with id " << id << ". You are playing as " << getXOFromInt(response.letter) << endl;
+        int wMove = 1;
+        int board[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        runGame(board, wMove, secret);
     } else {
         handleError(response);
     }
+}
+
+void listGames(string name)
+{
+    string serverResponse = getData("/listGames");
 }
 
 void playGames()
@@ -264,35 +304,32 @@ void playGames()
     cin >> name;
     char anwser;
     while (true) {
-        cout << "Would you like to start a new game? y/n" << endl;
+        cout << "Would you like to start a new game or list all available games? Enter 1 or 2. Enter 3 to exit." << endl;
         while (true) {
             cin >> anwser;
-            if (tolower(anwser) == 'y') {
+            if (anwser == '1') {
+                startGame(name);
                 break;
-            } else if (tolower(anwser) == 'n') {
+            } else if (anwser == '2') {
+                listGames(name);
+                break;
+            } else if (anwser == '3') {
                 return;
             }
             cout << "invalid response" << endl;
         }
-        startGame(name);
     }
 }
 
 int main()
 {
-    playGames();
-    return 0;
-    int board[] = {1, 0, 0, 1, 0, 0, 1, 0, 0};
-    cout << getData("vm1.razoft.net:1337", "next", "id=game-0") << endl;
-    cout << getWinner(board) << endl;
-    printBoard(board, false);
-    jsonObject x = processJson("{\"status\":\"okay\",\"board\":[0,0,0,1,0,0,0,1,0],\"turn\":1}");
-    cout << "Json Example : " << endl;
-    cout << x.status << endl;
-    cout << x.turn << endl;
-    cout << "board : " << endl;
-    for (int i = 0; i < 9; i++) {
-        cout << x.board[i] << endl;
+    cout << "Would you like to use the defualt host (" << host << ") or enter an alternitive? y/n" << endl;
+    char a;
+    cin >> a;
+    if (a == 'n') {
+    	cout << "Enter host name :" << endl;
+    	cin >> host;
     }
+    playGames();
     return 0;
 }
