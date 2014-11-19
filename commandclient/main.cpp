@@ -197,6 +197,8 @@ int getOppsite(int x)
 
 bool makeMove(int board[9], string secret)
 {
+    string serverResponse;
+    generalRequest response;
     cout << "It is your turn, select a move to make or enter 10 to end the game : " << endl;
     printBoard(board, true);
     int m;
@@ -355,10 +357,72 @@ struct gameObject
     int isPrivate;
 };
 
+struct gameObject
+{
+    string id;
+    string name;
+    string description;
+    int letter;
+    int isPrivate;
+};
+
+
 vector<gameObject> getGames(boost::property_tree::ptree pt)
 {
+    vector<gameObject> ret;
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, pt.get_child("games")) {
-        r.push_back(v.second.get_value<int>());
+        gameObject x;
+        x.id = v.second.get<string>("id");
+        x.name = v.second.get<string>("name");
+        x.description = v.second.get<string>("description");
+        x.letter = v.second.get<int>("letter");
+        x.isPrivate = v.second.get<int>("private");
+        ret.push_back(x);
+    }
+    return ret;
+}
+
+void printList(vector<gameObject> games)
+{
+    cout << "(0) = Go Back" << endl;
+    for (int i = 0; i < games.size(); i++) {
+        cout << "(" << i + 1 << ") = " << games[i].id << ". Started by " << games[i].name << ". Description : " << games[i].description << ". Can join as " << getXOFromInt(games[i].letter);
+        if (games[i].isPrivate == 1) {
+            cout << ". This is a private game";
+        }
+        cout << endl;
+    }
+}
+
+void tryJoinGame(vector<gameObject> games, int n, string name)
+{
+    string pin;
+    if (games[n].isPrivate == 1) {
+        cout << "Attempting to join a private game, please enter the 4 digit pin" << endl;
+        cin >> pin;
+        if (validPin(pin) == false) {
+            cout << "Invalid pin" << endl;
+            return;
+        }
+        string serverResponse = getData("/joinGame?id=" + games[n].id + "&name=" + name + "&pin=" + pin);
+        generalRequest response = processJson(serverResponse);
+        string secret = response.secret;
+        if (response.status == "okay") {
+            string serverResponse = getData("/next?secret=" + secret);
+            runGame(response.board, response.turn, secret);
+        } else {
+            handleError(response);
+        }
+    } else {
+        string serverResponse = getData("/joinGame?id=" + games[n].id + "&name=" + name);
+        generalRequest response = processJson(serverResponse);
+        string secret = response.secret;
+        if (response.status == "okay") {
+            string serverResponse = getData("/next?secret=" + secret);
+            runGame(response.board, response.turn, secret);
+        } else {
+            handleError(response);
+        }
     }
 }
 
@@ -374,6 +438,24 @@ void listGames(string name)
     int code = pt.get("code", 0);
     if (status == "okay") {
         vector<gameObject> games = getGames(pt);
+        if (games.size() == 0) {
+            cout << "No games available to join" << endl;
+            return;
+        }
+        printList(games);
+        int g;
+        while (true) {
+            cout << "Enter a game you want to join or enter 0 to go back" << endl;
+            cin >> g;
+            if (g == 0) {
+                return;
+            } else if (g > 0 and g <= games.size()) {
+                tryJoinGame(games, g - 1, name);
+                return;
+            } else {
+                cout << "Invalid response" << endl;
+            }
+        }
     } else {
         cout << "Got error : " << code << " , " << message << endl;
     }
