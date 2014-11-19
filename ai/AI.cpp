@@ -81,9 +81,7 @@ int AI::minimax(std::vector<int> board, int depth, int currentPlayer, int& choic
 				move = moves[i].second;
 			}
 		}
-		choice = move;
-		std::cout << "Choosing: " << move << " (score: " << max << ")" << std::endl;
-		
+		choice = move;	
 		return max;
 	} else if(currentPlayer == oppLetter) {	// min
 		int min = 100;
@@ -95,7 +93,6 @@ int AI::minimax(std::vector<int> board, int depth, int currentPlayer, int& choic
 			}
 		}
 		choice = move;
-		std::cout << "Choosing: " << move << " (score: " << min << ")" << std::endl;
 		return min;
 	}
 	
