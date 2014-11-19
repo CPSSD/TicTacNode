@@ -73,8 +73,8 @@ int AI::minimax(std::vector<int> board, int depth, int currentPlayer, int& choic
 	
 	// Return the min or the max.
 	if(currentPlayer == letter) {	// max
-		int max = 0;
-		int move = 0;
+		int max = -1000;
+		int move;
 		for(unsigned int i = 0; i < moves.size(); i++) {
 			if(moves[i].first > max) {
 				max = moves[i].first;
@@ -84,7 +84,7 @@ int AI::minimax(std::vector<int> board, int depth, int currentPlayer, int& choic
 		choice = move;	
 		return max;
 	} else if(currentPlayer == oppLetter) {	// min
-		int min = 100;
+		int min = 1000;;
 		int move;
 		for(unsigned int i = 0; i < moves.size(); i++) {
 			if(moves[i].first < min) {
