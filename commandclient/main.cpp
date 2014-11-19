@@ -305,10 +305,10 @@ string getGameRequest(string name)
 {
     cout << "Please enter a game description : " << endl;
     string desc;
-    getline(cin, desc);
+    cin >> noskipws() >> desc;
     char anwser;
     cout << "Would you like to play as X or O? : " << endl;
-    cin >> anwser;
+    cin >> skipws() >> anwser;
     string letter;
     if (anwser == 'X') {
         letter = "1";
