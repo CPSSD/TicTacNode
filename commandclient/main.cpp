@@ -254,31 +254,75 @@ int tryNext(int board[9], string secret)
 void runGame(int board[9], int wMove, string secret)
 {
     while (true) {
-            if (getWinner(board) >= 0) {
-                handleWinner(player, getWinner(board));
-                break;
+        if (getWinner(board) >= 0) {
+            handleWinner(player, getWinner(board));
+            break;
+        } else {
+            if (wMove == player) {
+                bool moveMade = makeMove(board, secret);
+                if (moveMade == false) {
+                    return;
+                }
+                wMove = getOppsite(wMove);
             } else {
-                if (wMove == player) {
-                    bool moveMade = makeMove(board, secret);
-                    if (moveMade == false) {
-                        return;
-                    }
+                int meNext = tryNext(board, secret);
+                if (meNext == 2) {
                     wMove = getOppsite(wMove);
-                } else {
-                    int meNext = tryNext(board, secret);
-                    if (meNext == 2) {
-                        wMove = getOppsite(wMove);
-                    } else if (meNext == 3) {
-                        return;
-                    }
+                } else if (meNext == 3) {
+                    return;
                 }
             }
         }
+    }
+}
+
+bool validPin(string pin)
+{
+    if (pin.length() != 4) {
+        return false;
+    }
+    for (int i = 0; i < pin.length(); i++) {
+        if (isdigit(pin[i]) == false) {
+            return false;
+        }
+    }
+    return true;
+}
+
+string getGameRequest()
+{
+    cout << "Please enter a game description : " << endl;
+    string desc;
+    getline(cin, desc);
+    char anwser;
+    cout << "Would you like to play as X or O? : " << endl;
+    cin >> anwser;
+    string letter;
+    if (anwser == 'X') {
+        letter = "1";
+    } else {
+        letter = "2";
+    }
+    cout << "Would you like this game to be private? y/n" << endl;
+    cin >> anwser;
+    if (tolower(anwser) == 'y') {
+        cout << "Please enter a 4 digit pin : " << endl;
+        string pin;
+        while (true) {
+            cin >> pin;
+            if (validPin(pin)) {
+                return "/startGame?name=" + name + "&description=" + convertSpaces(desc) + "&letter=" + letter + "&private=1" + "&pin=" + pin;
+            } else {
+                cout << "Invalid pin" << endl;
+            }
+        }
+    }
+    return "/startGame?name=" + name + "&description=" + convertSpaces(desc) + "&letter=" + letter + "&private=0";
 }
 
 void startGame(string name)
 {
-    string serverResponse = getData("/startGame?name=" + name);
+    string serverResponse = getData(getGameRequest());
     generalRequest response = processJson(serverResponse);
     if (response.status == "okay") {
         string secret = response.secret;
@@ -292,9 +336,22 @@ void startGame(string name)
     }
 }
 
+struct gameObject
+{
+    string id;
+    string named;
+    string description;
+    int letter;
+    int isPrivate;
+};
+
 void listGames(string name)
 {
     string serverResponse = getData("/listGames");
+    stringstream ss;
+    ss << serverResponse;
+    boost::property_tree::ptree pt;
+    boost::property_tree::read_json(ss, pt);
 }
 
 void playGames()
