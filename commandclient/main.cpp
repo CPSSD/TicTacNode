@@ -195,7 +195,7 @@ int getOppsite(int x)
     return 1;
 }
 
-bool makeMove(int board[9], string secret)
+bool makeMove(int player, int board[9], string secret)
 {
     string serverResponse;
     generalRequest response;
@@ -227,10 +227,10 @@ bool makeMove(int board[9], string secret)
     }
 }
 
-int tryNext(int board[9], string secret)
+int tryNext(int player, int board[9], string secret)
 {
-    serverResponse = getData("/next?secret=" + secret);
-    response = processJson(serverResponse);
+    string serverResponse = getData("/next?secret=" + secret);
+    generalRequest response = processJson(serverResponse);
     if (response.status == "okay") {
         if (response.winner >= 0) {
             handleWinner(player, response.winner);
@@ -253,7 +253,7 @@ int tryNext(int board[9], string secret)
     }
 }
 
-void runGame(int board[9], int wMove, string secret)
+void runGame(int player, int board[9], int wMove, string secret)
 {
     while (true) {
         if (getWinner(board) >= 0) {
@@ -261,13 +261,13 @@ void runGame(int board[9], int wMove, string secret)
             break;
         } else {
             if (wMove == player) {
-                bool moveMade = makeMove(board, secret);
+                bool moveMade = makeMove(player, board, secret);
                 if (moveMade == false) {
                     return;
                 }
                 wMove = getOppsite(wMove);
             } else {
-                int meNext = tryNext(board, secret);
+                int meNext = tryNext(player, board, secret);
                 if (meNext == 2) {
                     wMove = getOppsite(wMove);
                 } else if (meNext == 3) {
@@ -301,7 +301,7 @@ string convertSpaces(string x)
     return x;
 }
 
-string getGameRequest()
+string getGameRequest(string name)
 {
     cout << "Please enter a game description : " << endl;
     string desc;
@@ -334,28 +334,19 @@ string getGameRequest()
 
 void startGame(string name)
 {
-    string serverResponse = getData(getGameRequest());
+    string serverResponse = getData(getGameRequest(name));
     generalRequest response = processJson(serverResponse);
     if (response.status == "okay") {
         string secret = response.secret;
         int player = response.letter;
-        cout << "Started game with id " << id << ". You are playing as " << getXOFromInt(response.letter) << endl;
+        cout << "Started game with id " << response.id << ". You are playing as " << getXOFromInt(response.letter) << endl;
         int wMove = 1;
         int board[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-        runGame(board, wMove, secret);
+        runGame(player, board, wMove, secret);
     } else {
         handleError(response);
     }
 }
-
-struct gameObject
-{
-    string id;
-    string named;
-    string description;
-    int letter;
-    int isPrivate;
-};
 
 struct gameObject
 {
@@ -406,20 +397,22 @@ void tryJoinGame(vector<gameObject> games, int n, string name)
         }
         string serverResponse = getData("/joinGame?id=" + games[n].id + "&name=" + name + "&pin=" + pin);
         generalRequest response = processJson(serverResponse);
+        int player = response.letter;
         string secret = response.secret;
         if (response.status == "okay") {
             string serverResponse = getData("/next?secret=" + secret);
-            runGame(response.board, response.turn, secret);
+            runGame(player, response.board, response.turn, secret);
         } else {
             handleError(response);
         }
     } else {
         string serverResponse = getData("/joinGame?id=" + games[n].id + "&name=" + name);
         generalRequest response = processJson(serverResponse);
+        int player = response.letter;
         string secret = response.secret;
         if (response.status == "okay") {
             string serverResponse = getData("/next?secret=" + secret);
-            runGame(response.board, response.turn, secret);
+            runGame(player, response.board, response.turn, secret);
         } else {
             handleError(response);
         }
