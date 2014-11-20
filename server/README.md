@@ -2,6 +2,10 @@
 This is the server for the TicTacToe game, written in Node.js
 
 
+Old Source is available in the v1.0 folder
+
+---
+#Old Installation
 ## Installation ##
 
 ### Linux ###

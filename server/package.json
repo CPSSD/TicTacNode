@@ -1,0 +1,33 @@
+{
+  "name":"TicTacNode",
+
+  "version":"2.0.0",
+
+  "description":"Node.js implementation of TicTacNode Server.",
+
+  "bugs":{
+    "url":"http://github.com/Team-CTW/TicTacNode/issues"
+  },
+
+  "repository":{
+    "type": "git",
+    "url": "http://github.com/Team-CTW/TicTacNode"
+  },
+
+  "private":true,
+
+  "author":{
+    "name":"Wojciech Bednarzak",
+    "email":"wojciech.bednarzak2@mail.dcu.ie",
+    "url":"http://github.com/VoyTechnology"
+  },
+
+  "dependencies":{
+    "mongojs":"0.17.0",
+    "forever":"0.13.0"
+  },
+
+  "scripts":{
+    "stop":"forever stop TicTacNode"
+  }
+}

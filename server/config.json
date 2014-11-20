@@ -1,9 +1,27 @@
 {
+  "version": {
+    "major":2,
+    "minor":0
+  },
+
   "port":1337,
-  "authorised_requests": [
-    "/newGame",
-    "/next",
-    "/move",
-    "/serverAdmin"
+
+  "db":{
+    "name":"tictacnode",
+    "collections": [
+      "games",
+      "meta"
+    ]
+  },
+
+  "authReq": [
+    "version",
+    "startGame",
+    "listGames",
+    "joinGame",
+    "endGame",
+    "next",
+    "move",
+    "serverAdmin"
   ]
 }
