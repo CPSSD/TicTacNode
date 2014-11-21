@@ -1,5 +1,5 @@
 // Error function
-exports.err = function(c){
+module.exports = function(c){
   var ret = {};
   ret.status = "error";
   ret.code = c;

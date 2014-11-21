@@ -1,7 +1,7 @@
-var ret = require('./ret.js').ret,
-    config = require('../config.json');
+var config = require('../config.json'),
+	ret = require('./ret.js');
 
 // Returns version on request
-exports.version = function(res){
+module.exports = function(res){
   ret(res, {'version':config.version});
 };

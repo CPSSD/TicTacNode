@@ -1,21 +1,29 @@
 // Include required packages
 var http = require('http'),
     url = require('url'),
+    mongojs = require('mongojs'),
 
 // Include custom files
-    err       = require('./src/err.js').err,
+    err       = require('./src/err.js'),
     config    = require('./config.json'),
-    db        = require('./src/db.js').db,
-    extra     = require('./src/extra.js').extra,
+    ret       = require('./src/ret.js'),
+    db        = require('./src/db.js'),
+    extra     = require('./src/extra.js'),
+    serverAdmin = require('./src/serverAdmin.js'),
 
-    version   = require('./src/version.js').version,
-    startGame = require('./src/startGame.js').startGame,
-    listGames = require('./src/listGames.js').listGames,
-    joinGame  = require('./src/joinGame.js').joinGame,
-    endGame   = require('./src/endGame.js').endGame,
-    next      = require('./src/next.js').next,
-    ret       = require('./src/ret.js').ret,
-    move      = require('./src/move.js').move;
+    version   = require('./src/version.js'),
+    startGame = require('./src/startGame.js'),
+    listGames = require('./src/listGames.js'),
+    joinGame  = require('./src/joinGame.js'),
+    endGame   = require('./src/endGame.js'),
+    next      = require('./src/next.js'),
+    move      = require('./src/move.js');
+
+// Return object
+var ret = {};
+
+// Server Time
+var server_time;
 
 // Create the HTTP server
 http.createServer(function(req,res){
@@ -38,40 +46,39 @@ http.createServer(function(req,res){
         version(res);
         break;
       case 'startGame':
-        startGame(res,q);
+        startGame(res,q, server_time);
         break;
       case 'listGames':
-        listGames(res,q);
+        listGames(res,q, server_time);
         break;
       case 'joinGame':
-        joinGame(res,q);
+        joinGame(res,q, server_time);
         break;
       case 'endGame':
-        endGame(res,q);
+        endGame(res,q, server_time);
         break;
       case 'next':
         next(res,q);
         break;
       case 'move':
-        move(res,q);
+        move(res,q, server_time);
         break;
       case 'serverAdmin':
-        serverAdmin(res,q);
+        serverAdmin(res);
         break;
     }
   }
 
 }).listen(config.port);
 
-var server_time = 0;
-
 // Timekeeping loop, removes old games
 setInterval(function(){
-
-  server_time++;
+  extra.updateServerTime(function(new_time){
+    server_time = new_time;
+  });
 
   extra.removeOldGames(server_time);
 
 
-// Set the interval to 20 seconds
+// Set the interval to 20 seconds and invoke the interval
 },1000*20);

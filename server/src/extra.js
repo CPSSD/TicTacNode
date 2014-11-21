@@ -1,6 +1,6 @@
-var db = require('./db.js').db;
+var db = require('./db.js');
 
-exports.extra = {
+module.exports = {
   // Removes old games,
   removeOldGames: function(s_t){
     db.games.update(
@@ -8,5 +8,14 @@ exports.extra = {
       { $set: { winner: -1 } },
       function(){}
     );
+  },
+
+  updateServerTime: function(){
+  	db.meta.findAndModify({
+  		query: {},
+  		update: { $inc: { server_time: 1 } },
+  		new: true,
+  		upsert: true
+  	});
   }
 };
