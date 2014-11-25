@@ -20,10 +20,10 @@ class Connector
 		Connector(std::string newAddress);
 	
 		/** Function to request a new game from the server. */
-		std::string newGame(std::string name);
+		std::string newGame(std::string name, std::string desc, int letter);
 		
 		/** Function to check who currently has the move. */
-		std::string next(std::string gameID);
+		std::string next(std::string secret);
 		
 		/** Function to make a move on the board. */
 		std::string move(std::string gameID, std::string position);

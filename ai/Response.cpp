@@ -18,6 +18,7 @@ Response::Response(std::string input)
 	
 	status = pt.get("status", "");
 	id = pt.get("id", "");
+    secret = pt.get("secret", "");
 	letter = pt.get("letter", 0);
 	parseBoard(pt);
 	turn = pt.get("turn", 0);
