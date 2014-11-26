@@ -3,5 +3,5 @@ var config = require('../config.json'),
 
 // Returns version on request
 module.exports = function(res){
-  ret(res, {'status':'okay','version':config.version});
+  ret(res, {'status':'okay', 'major': config.version.major, 'minor': config.version.minor });
 };
