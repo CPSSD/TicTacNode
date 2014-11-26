@@ -10,6 +10,6 @@ module.exports = function(res){
 			retObj.games = games;
 
 			ret(res, retObj);
-		})
+		});
 	});
-}
+};
