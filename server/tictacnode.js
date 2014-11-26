@@ -23,7 +23,10 @@ var http = require('http'),
 var ret = {};
 
 // Server Time
-var server_time;
+var server_time = 0;
+extra.updateServerTime(function(new_time){
+  server_time = new_time;
+});
 
 // Create the HTTP server
 http.createServer(function(req,res){
@@ -37,7 +40,7 @@ http.createServer(function(req,res){
   var q = get.query,
       p = get.pathname.substring(1);
 
-  if(config.authReq.indexOf(p) === -1){
+  if(config.authReq.indexOf(p) === -1 || p.length === 0){
     // Return 103 if the request was not found
     err(103);
   } else {
@@ -46,22 +49,22 @@ http.createServer(function(req,res){
         version(res);
         break;
       case 'startGame':
-        startGame(res,q, server_time);
+        startGame(res, q, server_time);
         break;
       case 'listGames':
-        listGames(res,q, server_time);
+        listGames(res, q, server_time);
         break;
       case 'joinGame':
-        joinGame(res,q, server_time);
+        joinGame(res, q, server_time);
         break;
       case 'endGame':
-        endGame(res,q, server_time);
+        endGame(res, q, server_time);
         break;
       case 'next':
-        next(res,q);
+        next(res, q);
         break;
       case 'move':
-        move(res,q, server_time);
+        move(res, q, server_time);
         break;
       case 'serverAdmin':
         serverAdmin(res);
@@ -71,14 +74,15 @@ http.createServer(function(req,res){
 
 }).listen(config.port);
 
-// Timekeeping loop, removes old games
+// Timekeeping loop, updates server time and clears old games
 setInterval(function(){
+
   extra.updateServerTime(function(new_time){
     server_time = new_time;
   });
-
+  
   extra.removeOldGames(server_time);
 
 
-// Set the interval to 20 seconds and invoke the interval
+// Set the interval to 20 seconds
 },1000*20);
