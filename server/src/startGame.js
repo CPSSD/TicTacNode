@@ -18,7 +18,7 @@ module.exports = function(res, q, s_t){
 
     var desc = unescape(q.description);
     var lett = (q.letter == 2 || q.letter == 'o') ? 2 : 1;
-    var loc_id = (new Date().getTime()).toString()+s_t;
+    var loc_id = (new Date().getTime()).toString()+Math.floor( Math.random()*100 );
     var secret = secretGen();
 
     var gameObj = {
@@ -41,19 +41,12 @@ module.exports = function(res, q, s_t){
     };
 
     db.games.insert(gameObj, function(){
-      db.games.find({}, function(err, game){
-        for(var g in game){
-          if(game[g].id === loc_id){
-            ret(res, {
-              status: "okay",
-              id: "game-"+g,
-              secret: secret,
-              letter: lett
-            });
-          }
-        }
+      ret(res, {
+        "status": "okay",
+        "id": gameObj.id,
+        "secret": gameObj.player[0].secret,
+        "letter": gameObj.player[0].letter == 1 ? 2 : 1
       });
-
     });
 
   }
