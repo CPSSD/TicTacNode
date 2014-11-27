@@ -11,7 +11,7 @@ module.exports = function(res, q, s_t){
     for(var c in dataa){
       var data = dataa[c];
       var game = {};
-      if(!data.finished){
+      if(!data.finished && data.player.length == 1){
         game.id = "game-"+c;
         game.name = data.player[0].name;
         game.letter = data.player[0].letter == 1 ? 2 : 1;
