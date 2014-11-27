@@ -2,5 +2,11 @@
 var mongojs = require('mongojs'),
     config = require('../config.json');
 
-// Export the database connections
-module.exports = mongojs(config.db.name, config.db.collections);
+
+var db = mongojs(config.db.name, config.db.collections);
+
+// Set the index on secrets
+db.games.ensureIndex( {secret: 1} );
+
+// Export the database connection
+module.exports = db;

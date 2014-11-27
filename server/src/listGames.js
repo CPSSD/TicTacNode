@@ -17,10 +17,11 @@ module.exports = function(res, q, s_t){
         game.letter = data.player[0].letter == 1 ? 2 : 1;
         game.private = data.private;
         game.description = data.description;
+
+        games.push(game);
+        game = {};
       }
 
-      games.push(game);
-      game = {};
     }
 
     ret(res, games);
