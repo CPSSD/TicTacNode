@@ -6,7 +6,7 @@ module.exports = {
   removeOldGames: function(s_t){
     db.games.update(
       { "last_move": { $lt: s_t - 3 } },
-      { $set: { winner: -1 } },
+      { $set: { winner: 0, finished: true }  },
       function(){}
     );
   },
@@ -18,7 +18,7 @@ module.exports = {
   		update: { $inc: { server_time: 1 } },
   		new: true,
   		upsert: true
-  	}, function(err, data){
+  	}, function(er, data){
       callback(data.server_time);
     });
   },
@@ -54,7 +54,7 @@ module.exports = {
 
   // Function to update last move
   updateLastMove: function(game_id){
-    db.meta.find({}, function(data){
+    db.meta.find({}, function(er, data){
       db.games.update({id: game_id}, { $set: { last_move: data[0] } });
     });
   }
