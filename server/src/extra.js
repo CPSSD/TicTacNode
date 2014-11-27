@@ -12,13 +12,15 @@ module.exports = {
   },
 
   // Updates the server time in the database and returns the time
-  updateServerTime: function(){
+  updateServerTime: function(callback){
   	db.meta.findAndModify({
   		query: {},
   		update: { $inc: { server_time: 1 } },
   		new: true,
   		upsert: true
-  	});
+  	}, function(err, data){
+      callback(data.server_time);
+    });
   },
 
   // Check does the list of requests contain a specific request
