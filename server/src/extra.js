@@ -50,5 +50,14 @@ module.exports = {
         r = r.length%2 === 0 ? r+"ab" : r;
 
     return btoa( r );
+  },
+
+  // Function to update last move
+  updateLastMove: function(game_id){
+    db.meta.find({}, function(data){
+      db.games.update({id: game_id}, { $set: { last_move: data[0] } });
+    });
   }
+
+
 };
