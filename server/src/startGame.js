@@ -33,7 +33,9 @@ module.exports = function(res, q, s_t){
       next: 1,
       finished: false,
       start_time: s_t,
-      last_move: s_t,
+
+      // Add an extra minute of waiting when starting the game
+      last_move: s_t+3,
       description: desc,
       private: q.private,
       pin: checkParam("pin",q) ? q.pin : null,
@@ -45,8 +47,9 @@ module.exports = function(res, q, s_t){
         "status": "okay",
         "id": gameObj.id,
         "secret": gameObj.player[0].secret,
-        "letter": gameObj.player[0].letter == 1 ? 2 : 1
+        "letter": gameObj.player[0].letter
       });
+      gameObj = {};
     });
 
   }
