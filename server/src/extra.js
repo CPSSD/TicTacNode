@@ -4,9 +4,10 @@ var db = require('./db.js'),
 module.exports = {
   // Removes old games,
   removeOldGames: function(s_t){
-    db.games.update(
+  db.games.update(
       { "last_move": { $lt: s_t - 3 } },
       { $set: { winner: 0, finished: true }  },
+      { multi: true },
       function(){}
     );
   },
