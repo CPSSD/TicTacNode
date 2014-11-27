@@ -78,6 +78,8 @@ var performInsertion = function(res, q, game){
   db.games.update({ id: game.id }, {
     $push: { player: newPlayer }
   }, insertSuccess(res, newPlayer));
+
+  newPlayer = {};
 };
 
 
