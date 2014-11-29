@@ -1,9 +1,0 @@
-#!/bin/bash
-
-echo "Starting TicTacNode Server..."
-
-if forever start -a --minUptime 1000 --spinSleepTime 1000 --uid "TicTacNode" tictacnode.js &> /dev/null; then
-  echo -e "Server Started"
-else
-  echo -e "Server failed to start";
-fi
