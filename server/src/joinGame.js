@@ -15,12 +15,11 @@ module.exports = function(res, q, s_t){
   } else {
 
     // get all games and cycle through
-    db.games.find({id: q.id}, function(er, data){
+    db.games.findOne({id: q.id}, function(er, game){
       // If game of that ID was not found, return 107 - No such game
-      if(data.length === 0){
+      if(!game){
         ret(res, err(107));
       } else {
-        var game = data[0];
 
         // Check is there only one player
         if(game.player.length != 1){
@@ -67,7 +66,7 @@ var performInsertion = function(res, q, game){
   // Initialize new player data
   var newPlayer = {
     name: q.name,
-    letter: (game.player[0] == 1) ? 2 : 1,
+    letter: (game.player[0].letter == 1) ? 2 : 1,
     secret: secretGen(),
   };
 
