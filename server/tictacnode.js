@@ -7,7 +7,6 @@ var http = require('http'),
     err       = require('./src/err.js'),
     config    = require('./config.json'),
     ret       = require('./src/ret.js'),
-    db        = require('./src/db.js'),
     extra     = require('./src/extra.js'),
     serverAdmin = require('./src/serverAdmin.js'),
 
@@ -18,9 +17,6 @@ var http = require('http'),
     endGame   = require('./src/endGame.js'),
     next      = require('./src/next.js'),
     move      = require('./src/move.js');
-
-// Return object
-var ret = {};
 
 // Server Time
 var server_time = 0;
@@ -42,7 +38,7 @@ http.createServer(function(req,res){
 
   if(config.authReq.indexOf(p) === -1 || p.length === 0){
     // Return 103 if the request was not found
-    err(103);
+    ret(res, err(103));
   } else {
     switch(p){
       case 'version':
@@ -72,7 +68,7 @@ http.createServer(function(req,res){
     }
   }
 
-}).listen(config.port);
+}).listen(config.server.port);
 
 // Timekeeping loop, updates server time and clears old games
 setInterval(function(){
@@ -80,9 +76,9 @@ setInterval(function(){
   extra.updateServerTime(function(new_time){
     server_time = new_time;
   });
-  
+
   extra.removeOldGames(server_time);
 
 
-// Set the interval to 20 seconds
-},1000*20);
+// Set the check interval
+},config.server.check_interval);
