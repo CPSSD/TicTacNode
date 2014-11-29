@@ -1,6 +1,7 @@
 var db = require('./db.js'),
     ret = require('./ret.js'),
     extra = require('./extra.js'),
+    config = require('../config.json'),
     err = require('./err.js');
 
 var checkParam = extra.checkParam,
@@ -34,8 +35,8 @@ module.exports = function(res, q, s_t){
       finished: false,
       start_time: s_t,
 
-      // Add an extra minute of waiting when starting the game
-      last_move: s_t+3,
+      // Set the timeout time when the game starts
+      last_move: s_t-config.server.timeout+config.server.start_timeout,
       description: desc,
       private: q.private,
       pin: checkParam("pin",q) ? q.pin : null,
