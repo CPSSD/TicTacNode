@@ -53,6 +53,37 @@ namespace WindowsFormsApplication1
             return 1;
         }
 
+        public int getWinner(int[] board)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (board[i * 3] == board[i * 3 + 1] && board[i*3] == board[i * 3 + 1] && board[i*3] != 0)
+                {
+                    return board[i * 3];
+                }
+                if (board[i] == board[i + 3] && board[i] == board[i + 6] && board[i] != 0)
+                {
+                    return board[i];
+                }
+            }
+            if (board[0] == board[4] && board[0] == board[8] && board[0] != 0)
+            {
+                return board[0];
+            }
+            if (board[2] == board[4] && board[2] == board[6] && board[2] != 0)
+            {
+                return board[2];
+            }
+            for (int i = 0; i < 9; i++)
+            {
+                if (board[i] == 0)
+                {
+                    return 0;
+                }
+            }
+            return -1;
+        }
+
         public void showBoard(int turn, int player, int[] board)
         {
             if (turn == player)
@@ -108,7 +139,10 @@ namespace WindowsFormsApplication1
                     {
                         MainMenu.Visible = true;
                         playGame.Visible = false;
-                        getData(host + "/endGame?secret=" + secret);
+                        if (getWinner(board) == -1)
+                        {
+                            getData(host + "/endGame?secret=" + secret);
+                        }
                         return;
                     }
                     else if (doMove != -1)
@@ -125,6 +159,21 @@ namespace WindowsFormsApplication1
                             playGame.Visible = false;
                             MainMenu.Visible = true;
                             return;
+                        }
+                        if (getWinner(board) >= 0)
+                        {
+                            if (getWinner(board) == 0)
+                            {
+                                whatTurn.Text = "Game Drawn!";
+                            }
+                            else if (getWinner(board) == player)
+                            {
+                                whatTurn.Text = "You have won, well done";
+                            }
+                            else
+                            {
+                                whatTurn.Text = "You have lost the game";
+                            }
                         }
                         doMove = -1;
                     }
@@ -154,6 +203,23 @@ namespace WindowsFormsApplication1
                         }
                         else
                         {
+                            if (jsonResponse.winner >= 0)
+                            {
+                                board = jsonResponse.board;
+                                showBoard(turn, player, board);
+                                if (jsonResponse.winner == 0)
+                                {
+                                    whatTurn.Text = "Game Drawn!";
+                                }
+                                else if (jsonResponse.winner == player)
+                                {
+                                    whatTurn.Text = "You have won, well done";
+                                }
+                                else
+                                {
+                                    whatTurn.Text = "You have lost the game";
+                                }
+                            }
                             if (jsonResponse.turn == player)
                             {
                                 turn = player;
