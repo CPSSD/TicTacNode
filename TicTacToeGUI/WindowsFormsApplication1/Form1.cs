@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.IO;
 using System.Collections.Generic;
@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 using Newtonsoft.Json;
 
 namespace WindowsFormsApplication1
@@ -17,13 +18,19 @@ namespace WindowsFormsApplication1
     public partial class Form1 : Form
     {
         string host = "http://68.14.247.232";
+        bool myTurn = false;
+        int doMove = -1;
         Button[] playButton;
+        Label[] xs;
+        Label[] os;
 
         public Form1()
         {
             InitializeComponent();
             StartGameMenu.Visible = false;
             playButton = new Button[] { play1, play2, play3, play4, play5, play6, play7, play8, play9 };
+            xs = new Label[] { x1, x2, x3, x4, x5, x6, x7, x8, x9 };
+            os = new Label[] { o1, o2, o3, o4, o5, o6, o7, o8, o9 };
         }
 
         public string getData(string sURL)
@@ -37,8 +44,16 @@ namespace WindowsFormsApplication1
             return ret;
         }
 
+        public int oppsiteTurn(int turn)
+        {
+            if (turn == 1)
+            {
+                return 2;
+            }
+            return 1;
+        }
 
-        public void runGame(int player, string secret, int turn, int[] board)
+        public void showBoard(int turn, int player, int[] board)
         {
             if (turn == player)
             {
@@ -53,11 +68,114 @@ namespace WindowsFormsApplication1
                 if (board[i] == 1)
                 {
                     playButton[i].Visible = false;
+                    xs[i].Visible = true;
+                    os[i].Visible = false;
                 }
                 else if (board[i] == 2)
                 {
-
+                    playButton[i].Visible = false;
+                    xs[i].Visible = false;
+                    os[i].Visible = true;
                 }
+                else
+                {
+                    playButton[i].Visible = true;
+                    xs[i].Visible = false;
+                    os[i].Visible = false;
+                }
+            }
+        }
+
+        public void runGame(int player, string secret, int turn, int[] board)
+        {
+            doMove = -1;
+            showBoard(turn, player, board);
+            int count = 0;
+            if (player == turn)
+            {
+                myTurn = true;
+            }
+            else
+            {
+                myTurn = false;
+            }
+            while (true)
+            {
+                count++;
+                if (player == turn)
+                {
+                    if (doMove == -2)
+                    {
+                        MainMenu.Visible = true;
+                        playGame.Visible = false;
+                        getData(host + "/endGame?secret=" + secret);
+                        return;
+                    }
+                    else if (doMove != -1)
+                    {
+                        myTurn = false;
+                        board[doMove] = player;
+                        turn = oppsiteTurn(turn);
+                        showBoard(turn, player, board);
+                        string response = getData(host + "/move?secret=" + secret + "&position=" + doMove.ToString());
+                        JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
+                        if (jsonResponse.status == "error")
+                        {
+                            MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
+                            playGame.Visible = false;
+                            MainMenu.Visible = true;
+                            return;
+                        }
+                        doMove = -1;
+                    }
+                    else
+                    {
+                        Application.DoEvents();
+                        Thread.Sleep(10);
+                    }
+                }
+                else
+                {
+                    if (doMove == -2)
+                    {
+                        MainMenu.Visible = true;
+                        playGame.Visible = false;
+                        getData(host + "/endGame?secret=" + secret);
+                        return;
+                    }
+                    if (count >= 100)
+                    {
+                        count = 0;
+                        string response = getData(host + "/next?secret=" + secret);
+                        JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
+                        if (jsonResponse.status == "error")
+                        {
+                            MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
+                        }
+                        else
+                        {
+                            if (jsonResponse.turn == player)
+                            {
+                                turn = player;
+                                myTurn = true;
+                                board = jsonResponse.board;
+                                showBoard(turn, player, board);
+                            }
+                        }
+                    }
+                    Application.DoEvents();
+                    Thread.Sleep(10);
+                }
+            }
+        }
+
+        public void makeMove(object sender, EventArgs e)
+        {
+            string name = ((Button)sender).Name;
+            int num = name.Last() - '0';
+            if (myTurn)
+            {
+                doMove = num - 1;
             }
         }
 
@@ -130,7 +248,7 @@ namespace WindowsFormsApplication1
                 JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
                 if (jsonResponse.status == "error")
                 {
-                    MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
+                    MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
                     return;
                 }
                 StartGameMenu.Visible = false;
@@ -142,7 +260,7 @@ namespace WindowsFormsApplication1
                 JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
                 if (jsonResponse.status == "error")
                 {
-                    MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
+                    MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
                     return;
                 }
                 StartGameMenu.Visible = false;
@@ -188,6 +306,11 @@ namespace WindowsFormsApplication1
             {
                 pickYes.Checked = false;
             }
+        }
+
+        private void ExitGame_Click(object sender, EventArgs e)
+        {
+            doMove = -2;
         }
 
     }
