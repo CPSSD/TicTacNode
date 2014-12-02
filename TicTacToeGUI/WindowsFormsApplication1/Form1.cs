@@ -24,6 +24,17 @@ namespace WindowsFormsApplication1
         Label[] xs;
         Label[] os;
 
+        //Data for the gamesList
+        int currentpage;
+        gameObject[] prevgames;
+        Label[] ids;
+        Label[] gameby;
+        Label[] descs;
+        Label[] playas;
+        Label[] pubs;
+        TextBox[] pins;
+        GroupBox[] groupB;
+
         public Form1()
         {
             InitializeComponent();
@@ -31,6 +42,13 @@ namespace WindowsFormsApplication1
             playButton = new Button[] { play1, play2, play3, play4, play5, play6, play7, play8, play9 };
             xs = new Label[] { x1, x2, x3, x4, x5, x6, x7, x8, x9 };
             os = new Label[] { o1, o2, o3, o4, o5, o6, o7, o8, o9 };
+            ids = new Label[] { gameId1, gameId2, gameId3, gameId4};
+            gameby = new Label[] { startedBy1, startedBy2, startedBy3, startedBy4};
+            descs = new Label[] { description1, description2, description3, description4};
+            playas = new Label[] { playAs1, playAs2, playAs3, playAs4};
+            pubs = new Label[] { public1, public2, public3, public4};
+            pins = new TextBox[] { pin1, pin2, pin3, pin4};
+            groupB = new GroupBox[] { groupBox1, groupBox2, groupBox3, groupBox4};
         }
 
         public string getData(string sURL)
@@ -78,10 +96,10 @@ namespace WindowsFormsApplication1
             {
                 if (board[i] == 0)
                 {
-                    return 0;
+                    return -1;
                 }
             }
-            return -1;
+            return 0;
         }
 
         public void showBoard(int turn, int player, int[] board)
@@ -379,6 +397,173 @@ namespace WindowsFormsApplication1
             doMove = -2;
         }
 
+        private void Exit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void Settings_Click(object sender, EventArgs e)
+        {
+            MainMenu.Visible = false;
+            showSettings.Visible = true;
+            curHost.Text = "Current : " + host;
+            enterBelow.Text = "Enter new host below : ";
+        }
+
+        private void noChange_Click(object sender, EventArgs e)
+        {
+            showSettings.Visible = false;
+            MainMenu.Visible = true;
+        }
+
+        public bool goodHost(string x)
+        {
+            if (x.Substring(0, 7) != "http://")
+            {
+                return false;
+            }
+            string response = getData(x + "/version");
+            JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
+            if (jsonResponse.status != "okay")
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private void Change_Click(object sender, EventArgs e)
+        {
+            if (goodHost(selectHost.Text) == false)
+            {
+                enterBelow.Text = "Invalid host entered!";
+            }
+            else
+            {
+                host = selectHost.Text;
+                curHost.Text = "Current : " + host;
+            }
+        }
+
+        private gameObject[] getGames(string response)
+        {
+            List<gameObject> list = new List<gameObject>();
+            dynamic process = JsonConvert.DeserializeObject(response);
+            gameObject x = new gameObject();
+            foreach (var s in process.games)
+            {
+                x.id = s.id;
+                x.description = s.description;
+                x.name = s.name;
+                x.letter = s.letter;
+                x.privat = s.@private;
+                list.Add(x);
+            }
+            gameObject[] ret = list.ToArray();
+            return ret;
+        }
+
+        private void getPage(int pagen, gameObject[] games)
+        {
+            currentpage = pagen;
+            if (pagen > 1)
+            {
+                lastPage.Visible = true;
+            }
+            else
+            {
+                lastPage.Visible = false;
+            }
+            int maxpage = (games.Length + 3) / 4;
+            if (pagen < maxpage)
+            {
+                nextPage.Visible = true;
+            }
+            else
+            {
+                nextPage.Visible = false;
+            }
+            page.Text = "Page " + pagen.ToString() + "/" + maxpage.ToString();
+            int first = (pagen - 1) * 4;
+            for (int i = 0; i < 4; i++)
+            {
+                if (first + i < games.Length)
+                {
+                    groupB[i].Visible = true;
+                    ids[i].Text = "Game Id : " + games[first + i].id;
+                    gameby[i].Text = "Started by " + games[first + i].name;
+                    descs[i].Text = games[first + i].name;
+                    if (games[first + i].letter == 1) {
+                        playas[i].Text = "Play as X";
+                    }
+                    else
+                    {
+                        playas[i].Text = "Play as O";
+                    }
+                    if (games[first + i].privat == 1)
+                    {
+                        pubs[i].Visible = false;
+                        pins[i].Visible = true;
+                        pins[i].Text = "Enter pin here";
+                    }
+                    else
+                    {
+                        pubs[i].Visible = true;
+                        pins[i].Visible = false;
+                    }
+                }
+                else
+                {
+                    groupB[i].Visible = false;
+                }
+            }
+        }
+
+        private void JoinGame_Click(object sender, EventArgs e)
+        {
+            MainMenu.Visible = false;
+            gamesList.Visible = true;
+            string response = getData(host + "/listGames");
+            JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
+            if (jsonResponse.status == "okay")
+            {
+                gameObject[] games = getGames(response);
+                prevgames = games;
+                getPage(1, games);
+            }
+            else
+            {
+                MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
+                MainMenu.Visible = true;
+                gamesList.Visible = false;
+            }
+        }
+
+        private void lastPage_Click(object sender, EventArgs e)
+        {
+            getPage(currentpage - 1, prevgames);
+        }
+
+        private void nextPage_Click(object sender, EventArgs e)
+        {
+            getPage(currentpage + 1, prevgames);
+        }
+
+        private void mainMenuBack_Click(object sender, EventArgs e)
+        {
+            gamesList.Visible = false;
+            MainMenu.Visible = true;
+        }
+
+
+    }
+
+    class gameObject
+    {
+        public string name;
+        public string id;
+        public string description;
+        public int letter;
+        public int privat;
     }
 
     class JsonProcess
@@ -391,6 +576,6 @@ namespace WindowsFormsApplication1
         public int letter = 0;
         public int[] board = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         public int turn = 0;
-        public int winner = 0;
+        public int winner = -1;
     }
 }
