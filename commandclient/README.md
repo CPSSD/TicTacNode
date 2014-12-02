@@ -11,8 +11,13 @@ Support is not currently available for Windows.
 
 ###Compiling
 The program is compiled using the makefile.
+For linux : 
 ```bash
 $ make all
+```
+For osx : 
+```bash
+$ make osx
 ```
 
 ###Usage:
