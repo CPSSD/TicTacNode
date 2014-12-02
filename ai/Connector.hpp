@@ -13,19 +13,19 @@ class Connector
 		CURL* curl;
 		std::string address;
 	
-		/* Callback function that will store the received data in a string. */
+		/** Callback function that will store the received data in a string. */
 		static size_t writeCallback(char* ptr, size_t size, size_t nmemb, void* data);
 	
 	public:
 		Connector(std::string newAddress);
 	
-		/* Function to request a new game from the server. */
-		std::string newGame(std::string name);
+		/** Function to request a new game from the server. */
+		std::string newGame(std::string name, std::string desc, int letter);
 		
-		/* Function to check who currently has the move. */
-		std::string next(std::string gameID);
+		/** Function to check who currently has the move. */
+		std::string next(std::string secret);
 		
-		/* Function to make a move on the board. */
+		/** Function to make a move on the board. */
 		std::string move(std::string gameID, std::string position);
 };
 

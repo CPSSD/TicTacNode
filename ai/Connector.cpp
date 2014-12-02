@@ -21,10 +21,10 @@ Connector::Connector(std::string newAddress)
 	address = newAddress;
 }
 
-std::string Connector::newGame(std::string name)
+std::string Connector::newGame(std::string name, std::string desc, int letter)
 {
 	std::string replyJSON;
-	std::string requestAddress = address+"/newGame?name="+name;
+	std::string requestAddress = address+"/startGame?name="+name+"&description='"+desc+"'&letter="+std::to_string(letter)+"&private=0";
 	
 	curl_easy_setopt(curl, CURLOPT_URL, requestAddress.c_str());
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
@@ -40,10 +40,10 @@ std::string Connector::newGame(std::string name)
     return replyJSON;
 }
 
-std::string Connector::next(std::string gameID)
+std::string Connector::next(std::string secret)
 {
 	std::string replyJSON;
-	std::string requestAddress = address+"/next?id="+gameID;
+	std::string requestAddress = address+"/next?secret="+secret;
 	
 	curl_easy_setopt(curl, CURLOPT_URL, requestAddress.c_str());
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
@@ -59,10 +59,10 @@ std::string Connector::next(std::string gameID)
     return replyJSON;
 }
 
-std::string Connector::move(std::string gameID, std::string position)
+std::string Connector::move(std::string secret, std::string position)
 {
 	std::string replyJSON;
-	std::string requestAddress = address+"/move?id="+gameID+"&position="+position;
+	std::string requestAddress = address+"/move?secret="+secret+"&position="+position;
 
 	curl_easy_setopt(curl, CURLOPT_URL, requestAddress.c_str());
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
