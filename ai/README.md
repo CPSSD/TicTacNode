@@ -27,6 +27,7 @@ This will compile a binary called "tictacnode_ai".
 
 ### Compiling the Documentation ###
 
+Note: This requires Doxygen to be installed.
 In a POSIX shell, run the following command from the directory in which this README is located:
 ```bash
 $ make doc
