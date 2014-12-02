@@ -3,7 +3,7 @@ var db = require('./db.js'),
 
 module.exports = function(res){
 	var retObj = {};
-	db.meta.find({}, function(err, meta){
+	db.meta.findOne({}, function(err, meta){
 		retObj.meta = meta;
 
 		db.games.find({}, function(err, games){
