@@ -101,7 +101,8 @@ int AI::minimax(std::vector<int> board, int depth, int currentPlayer, int& choic
 
 void AI::newGame(Connector& connector, std::string name)
 {
-	std::string responseString = connector.newGame(name);
+	int newLetter = (rand() % 2) + 1;
+    std::string responseString = connector.newGame(name, "AI_Game", newLetter);
 	std::cout << responseString << std::endl;
 	Response response(responseString);
 	if(response.status == "error") {
@@ -114,6 +115,7 @@ void AI::newGame(Connector& connector, std::string name)
 		oppLetter = 1;
 	}
 	gameID = response.id;
+    secret = response.secret;
 	board = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 }
 
@@ -128,7 +130,7 @@ int AI::winner(Connector& connector)
 
 int AI::next(Connector& connector)
 {
-	std::string responseString = connector.next(gameID);
+	std::string responseString = connector.next(secret);
 	std::cout << responseString << std::endl;
 	Response response(responseString);
 	if(response.status == "error") {
@@ -146,16 +148,16 @@ int AI::next(Connector& connector)
 int AI::chooseMove()
 {
 	int move;
-	int score = minimax(board, 0, letter, move);
+	minimax(board, 0, letter, move);
 	
-	std::cout << "Colin's move: " << move << " (score: " << score << ")." << std::endl;
+	std::cout << "Colin's move: " << move << std::endl;
 	return move;
 }
 
 void AI::move(Connector& connector, int move)
 {
 	std::cout << "Colin playing: " << move << std::endl;
-	std::string responseString = connector.move(gameID, std::to_string(move));
+	std::string responseString = connector.move(secret, std::to_string(move));
 	std::cout << responseString << std::endl;
 	Response response(responseString);
 	if(response.status == "error") {

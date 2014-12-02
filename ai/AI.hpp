@@ -22,6 +22,7 @@ class AI
 		int letter;	/**< 1=X, 2=O */
 		int oppLetter;	/**< Tracks opponent's letter */
 		std::string gameID;	/**< ID of the current game */
+        std::string secret; /**< Secret identifier for this player. */
 		std::vector<int> board;	/**< The current game board */
 		
 		/**
