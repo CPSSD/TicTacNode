@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace WindowsFormsApplication1
 {
@@ -173,7 +174,7 @@ namespace WindowsFormsApplication1
                         JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
                         if (jsonResponse.status == "error")
                         {
-                            MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
+                            MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                             playGame.Visible = false;
                             MainMenu.Visible = true;
                             return;
@@ -217,7 +218,7 @@ namespace WindowsFormsApplication1
                         JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
                         if (jsonResponse.status == "error")
                         {
-                            MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
+                            MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                         }
                         else
                         {
@@ -332,7 +333,7 @@ namespace WindowsFormsApplication1
                 JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
                 if (jsonResponse.status == "error")
                 {
-                    MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
+                    MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                     return;
                 }
                 StartGameMenu.Visible = false;
@@ -344,7 +345,7 @@ namespace WindowsFormsApplication1
                 JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
                 if (jsonResponse.status == "error")
                 {
-                    MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
+                    MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                     return;
                 }
                 StartGameMenu.Visible = false;
@@ -448,9 +449,9 @@ namespace WindowsFormsApplication1
         {
             List<gameObject> list = new List<gameObject>();
             dynamic process = JsonConvert.DeserializeObject(response);
-            gameObject x = new gameObject();
             foreach (var s in process.games)
             {
+                gameObject x = new gameObject();
                 x.id = s.id;
                 x.description = s.description;
                 x.name = s.name;
@@ -491,7 +492,7 @@ namespace WindowsFormsApplication1
                     groupB[i].Visible = true;
                     ids[i].Text = "Game Id : " + games[first + i].id;
                     gameby[i].Text = "Started by " + games[first + i].name;
-                    descs[i].Text = games[first + i].name;
+                    descs[i].Text = games[first + i].description;
                     if (games[first + i].letter == 1) {
                         playas[i].Text = "Play as X";
                     }
@@ -520,7 +521,6 @@ namespace WindowsFormsApplication1
 
         private void JoinGame_Click(object sender, EventArgs e)
         {
-            MainMenu.Visible = false;
             gamesList.Visible = true;
             string response = getData(host + "/listGames");
             JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
@@ -532,10 +532,12 @@ namespace WindowsFormsApplication1
             }
             else
             {
-                MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign, true);
+                MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 MainMenu.Visible = true;
                 gamesList.Visible = false;
             }
+            Application.DoEvents();
+            MainMenu.Visible = false;
         }
 
         private void lastPage_Click(object sender, EventArgs e)
@@ -554,6 +556,49 @@ namespace WindowsFormsApplication1
             MainMenu.Visible = true;
         }
 
+        private void joinGame(object sender, EventArgs e)
+        {
+            string name = ((Button)sender).Name;
+            int num = name.Last() - '1';
+            num = num + ((currentpage - 1) * 4);
+            if (prevgames[num].privat == 1)
+            {
+                if (validPin(pins[num - ((currentpage - 1) * 4)].Text) == false)
+                {
+                    pins[num - ((currentpage - 1) * 4)].Text = "Invalid";
+                    return;
+                }
+                string response = getData(host + "/joinGame?id=" + prevgames[num].id + "&name=Smith&pin=" + pins[num - ((currentpage - 1) * 4)].Text);
+                JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
+                if (jsonResponse.status == "okay")
+                {
+                    int[] b = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                    playGame.Visible = true;
+                    gamesList.Visible = false;
+                    runGame(jsonResponse.letter, jsonResponse.secret, 1, b);
+                }
+                else
+                {
+                    MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+                }
+            }
+            else
+            {
+                string response = getData(host + "/joinGame?id=" + prevgames[num].id + "&name=Smith");
+                JsonProcess jsonResponse = JsonConvert.DeserializeObject<JsonProcess>(response);
+                if (jsonResponse.status == "okay")
+                {
+                    int[] b = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                    playGame.Visible = true;
+                    gamesList.Visible = false;
+                    runGame(jsonResponse.letter, jsonResponse.secret, 1, b);
+                }
+                else
+                {
+                    MessageBox.Show("Error " + jsonResponse.code.ToString() + " : " + jsonResponse.message, "Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+                }
+            }
+        }
 
     }
 
