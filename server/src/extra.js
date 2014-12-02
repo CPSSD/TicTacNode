@@ -80,19 +80,19 @@ module.exports = {
       // Check horizontally and vertically
       for( var i = 0; i < 3; i++){
         if(b[i*3] == b[i*3 + 1] && b[i*3] == b[i*3 + 2] && b[i*3] > 0){
-          setWinner(game_id, b[i*3]);
+          this.setWinner(game_id, b[i*3]);
         }
         if (b[i] == b[i + 3] && b[i] == b[i + 6] && b[i] > 0) {
-          setWinner(game_id, b[i]);
+          this.setWinner(game_id, b[i]);
         }
       }
 
       // Check diagonally
       if (b[0] == b[4] && b[0] == b[8] && b[0] > 0) {
-        setWinner(game_id,b[0]);
+        this.setWinner(game_id,b[0]);
       }
       if (b[2] == b[4] && b[2] == b[6] && b[2] > 0) {
-        setWinner(game_id, b[2]);
+        this.setWinner(game_id, b[2]);
       }
 
       // Check are there any 0s. If there are it means game is not finished
@@ -103,12 +103,12 @@ module.exports = {
       }
 
       // Else set as draw
-      setWinner(game_id, 0);
+      this.setWinner(game_id, 0);
 
     });
   },
 
   setWinner: function(game_id, letter){
-    db.games.update({id: game_id},{ $set: {winner: letter,finished:true} }, function(){});
+    db.games.update({id: game_id},{ $set: { winner: letter, finished:true } }, function(){});
   }
 };
