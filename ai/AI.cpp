@@ -102,7 +102,7 @@ int AI::minimax(std::vector<int> board, int depth, int currentPlayer, int& choic
 void AI::newGame(Connector& connector, std::string name)
 {
 	int newLetter = (rand() % 2) + 1;
-    std::string responseString = connector.newGame(name, "AI Game", newLetter);
+    std::string responseString = connector.newGame(name, "AI_Game", newLetter);
 	std::cout << responseString << std::endl;
 	Response response(responseString);
 	if(response.status == "error") {
@@ -148,9 +148,9 @@ int AI::next(Connector& connector)
 int AI::chooseMove()
 {
 	int move;
-	int score = minimax(board, 0, letter, move);
+	minimax(board, 0, letter, move);
 	
-	std::cout << "Colin's move: " << move << " (score: " << score << ")." << std::endl;
+	std::cout << "Colin's move: " << move << std::endl;
 	return move;
 }
 

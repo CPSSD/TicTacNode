@@ -24,7 +24,7 @@ Connector::Connector(std::string newAddress)
 std::string Connector::newGame(std::string name, std::string desc, int letter)
 {
 	std::string replyJSON;
-	std::string requestAddress = address+"/newGame?name="+name+"&description="+desc+"&letter="+std::to_string(letter);
+	std::string requestAddress = address+"/startGame?name="+name+"&description='"+desc+"'&letter="+std::to_string(letter)+"&private=0";
 	
 	curl_easy_setopt(curl, CURLOPT_URL, requestAddress.c_str());
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
