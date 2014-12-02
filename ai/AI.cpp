@@ -17,17 +17,18 @@ int AI::getLetter()
 
 int AI::gameOver(std::vector<int> board)
 {
-	for(unsigned int i = 0; i < board.size(); i++) {
-		if(board[i*3] == board[i*3 + 1] && board[i*3] == board[i*3 + 2] && board[i] > 0) {
+	for(unsigned int i = 0; i < 3; i++) {
+		if(board[i*3] == board[i*3 + 1] && board[i*3] == board[i*3 + 2] && board[i*3] > 0) {
 			return board[i*3];
 		} else if(board[i] == board[i+3] && board[i] == board[i+6] && board[i] > 0) {
 			return board[i];
-		} else if(board[0] == board[4] && board[0] == board[8] && board[0] > 0) {
-			return board[0];
-		} else if(board[2] == board[4] && board[2] == board[6] && board[2] > 0) {
-			return board[2];
 		}
 	}
+    if(board[0] == board[4] && board[0] == board[8] && board[0] > 0) {
+		return board[0];
+	} else if(board[2] == board[4] && board[2] == board[6] && board[2] > 0) {
+		return board[2];
+    }
 	
 	// Check for blank spaces. If one exists then the game is not 
 	// over. If none exist the game is a draw.
@@ -50,7 +51,7 @@ int AI::score(std::vector<int> board, int depth)
 
 int AI::minimax(std::vector<int> board, int depth, int currentPlayer, int& choice)
 {
-	if(gameOver(board) > 0) return score(board, depth);
+	if(gameOver(board) >= 0) return score(board, depth);
 	depth++;
 	std::vector< std::pair<int, int> > moves;	// The moves and their corresponding scores.
 	
@@ -84,7 +85,7 @@ int AI::minimax(std::vector<int> board, int depth, int currentPlayer, int& choic
 		choice = move;	
 		return max;
 	} else if(currentPlayer == oppLetter) {	// min
-		int min = 1000;;
+		int min = 1000;
 		int move;
 		for(unsigned int i = 0; i < moves.size(); i++) {
 			if(moves[i].first < min) {
@@ -121,7 +122,7 @@ void AI::newGame(Connector& connector, std::string name)
 
 int AI::winner(Connector& connector)
 {
-	Response response(connector.next(gameID));
+	Response response(connector.next(secret));
 	if(response.status == "error") {
 		throw std::runtime_error(response.errorCode + ": " + response.message);
 	}
@@ -148,9 +149,9 @@ int AI::next(Connector& connector)
 int AI::chooseMove()
 {
 	int move;
-	minimax(board, 0, letter, move);
+	int score = minimax(board, 0, letter, move);
 	
-	std::cout << "Colin's move: " << move << std::endl;
+	std::cout << "Colin's move: " << move << " (score: " << score << ")" << std::endl;
 	return move;
 }
 

@@ -14,6 +14,8 @@
 #include "Response.hpp"
 #include "AI.hpp"
 
+const int SLEEP_TIME_SECONDS = 2;
+
 int main(int argc, char* argv[])
 {
 	srand(time(NULL));
@@ -79,7 +81,7 @@ int main(int argc, char* argv[])
 					std::exit(EXIT_FAILURE);
 				}
 			}
-			boost::this_thread::sleep(boost::posix_time::seconds(1));
+			boost::this_thread::sleep(boost::posix_time::seconds(SLEEP_TIME_SECONDS));
 			std::cout << std::endl;
 		}
 	}
