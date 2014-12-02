@@ -11,7 +11,7 @@
 
 using namespace std;
 
-string host = "cpssd4-web.computing.dcu.ie:80/";
+string host = "cpssd4-web.computing.dcu.ie:80";
 
 char boardChar(int x, char def)
 {
@@ -305,10 +305,10 @@ string getGameRequest(string name)
 {
     cout << "Please enter a game description : " << endl;
     string desc;
-    cin >> noskipws() >> desc;
+    cin >> noskipws >> desc;
     char anwser;
     cout << "Would you like to play as X or O? : " << endl;
-    cin >> skipws() >> anwser;
+    cin >> skipws >> anwser;
     string letter;
     if (anwser == 'X') {
         letter = "1";
