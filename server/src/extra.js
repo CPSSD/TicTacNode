@@ -25,6 +25,17 @@ module.exports = {
     });
   },
 
+  updateGameID: function(callback){
+    db.meta.findAndModify({
+      query: {},
+      update: { $inc: { current_id: 1 } },
+      new: true,
+      upsert: true
+    }, function(er, data){
+      callback(data.current_id);
+    });
+  },
+
   // Check does the list of requests contain a specific request
   checkParam: function(param, q){
     if(!q.hasOwnProperty(param)){
@@ -98,6 +109,6 @@ module.exports = {
   },
 
   setWinner: function(game_id, letter){
-    db.games.update({id: game_id},{ $set: {winner: letter} }, function(){});
+    db.games.update({id: game_id},{ $set: {winner: letter,finished:true} }, function(){});
   }
 };
