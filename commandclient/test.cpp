@@ -24,7 +24,6 @@
 using namespace std;
 
 string host = "cpssd4-web.computing.dcu.ie:80/";
-
 char boardChar(int x, char def)
 {
     if (x == 2) {
@@ -40,6 +39,14 @@ char toChar(int x)
     return '0' + x;
 }
 
+/**
+* @fn printBoard
+* @brief outputs the game board
+* 
+* @param b  the game board.
+* @param forSelection Output numbers if true, otherwise spaces
+*/
+
 void printBoard(int b[9], bool forSelection)
 {
     cout << "Current board : " << endl;
@@ -53,6 +60,14 @@ void printBoard(int b[9], bool forSelection)
     }
     cout << "-------" << endl;
 }
+
+/**
+* @fn getWinner
+* @brief gets the winner
+* 
+* @param b  the game board.
+* @return 0 for draw, 1 for X, 2 for O, otherwise -1
+*/
 
 int getWinner(int b[9])
 {
@@ -81,6 +96,15 @@ int getWinner(int b[9])
     //game is a draw
     return 0;
 }
+
+/**
+* @fn validMove
+* @brief Checks if a player can make a move
+* 
+* @param board The game board
+* @param pos The postion the player is trying to move to
+* @return True/false
+*/
 
 bool validMove(int board[9], int pos)
 {
@@ -155,6 +179,14 @@ size_t writeCallback(char* ptr, size_t size, size_t nmemb, void* data)
 	return size * nmemb;
 }
 
+/**
+* @fn getData
+* @brief makes requests to the server
+* 
+* @param request The request to be made
+* @return The anwser from the server
+*/
+
 string getData(string request)
 {
     string requestAddress = host + request;
@@ -206,6 +238,16 @@ int getOppsite(int x)
     }
     return 1;
 }
+
+/**
+* @fn makeMove
+* @brief Waits for the player to make a move
+* 
+* @param player  1 for player is X, 2 for O.
+* @param board The game board
+* @param secret The players secret
+* @return true if move made, false if the player exited the game
+*/
 
 bool makeMove(int player, int board[9], string secret)
 {
@@ -265,6 +307,17 @@ int tryNext(int player, int board[9], string secret)
     }
 }
 
+/**
+* @fn runGame
+* @brief Main game running function
+* 
+* @param player  1 for player is X, 2 for O.
+* @param board The game board
+* @param wMove 1 for Xs move, 2 for O
+* @param secret The players secret
+*/
+
+
 void runGame(int player, int board[9], int wMove, string secret)
 {
     while (true) {
@@ -313,14 +366,24 @@ string convertSpaces(string x)
     return x;
 }
 
+/**
+* @fn getGameRequest
+* @brief Gets the request to be made to the server
+* 
+* @param name The name of the player
+* @return The request to be made based on the details entered
+*/
+
+
 string getGameRequest(string name)
 {
     cout << "Please enter a game description : " << endl;
     string desc;
-    cin >> noskipws >> desc;
+    getline(cin, desc);
+    getline(cin, desc);
     char anwser;
     cout << "Would you like to play as X or O? : " << endl;
-    cin >> skipws >> anwser;
+    cin >> anwser;
     string letter;
     if (anwser == 'X') {
         letter = "1";
@@ -384,6 +447,14 @@ vector<gameObject> getGames(boost::property_tree::ptree pt)
     }
     return ret;
 }
+
+/**
+* @fn printList
+* @brief Prints a list of the games available to join
+* 
+* @param games A vector of the games available
+*/
+
 
 void printList(vector<gameObject> games)
 {
