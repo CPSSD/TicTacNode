@@ -39,6 +39,7 @@ namespace WindowsFormsApplication1
         public Form1()
         {
             InitializeComponent();
+            //pictureBox1.Image = new Bitmap("Resources/TicTackBack_400x4001.png");
             StartGameMenu.Visible = false;
             playButton = new Button[] { play1, play2, play3, play4, play5, play6, play7, play8, play9 };
             xs = new Label[] { x1, x2, x3, x4, x5, x6, x7, x8, x9 };
