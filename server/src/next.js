@@ -16,7 +16,7 @@ module.exports = function(res, q){
     db.games.findOne({"player.secret": q.secret}, function(er, game){
 
       if(!game){
-        err(res, err(107));
+        ret(res, err(107));
 
       } else {
         var result = {};
