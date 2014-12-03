@@ -24,9 +24,9 @@
   ],
 
   "server": {
-    "check_interval": 60000,
-    "timeout": 6,
-    "start_timeout": 12,
-    "port":1337
+    "check_interval": 20000,
+    "timeout": 3,
+    "start_timeout": 6,
+    "port":80
   }
 }
