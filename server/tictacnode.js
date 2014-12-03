@@ -7,16 +7,18 @@ var http = require('http'),
     err       = require('./src/err.js'),
     config    = require('./config.json'),
     ret       = require('./src/ret.js'),
-    extra     = require('./src/extra.js'),
-    serverAdmin = require('./src/serverAdmin.js'),
+    extra     = require('./src/extra.js');
 
-    version   = require('./src/version.js'),
-    startGame = require('./src/startGame.js'),
-    listGames = require('./src/listGames.js'),
-    joinGame  = require('./src/joinGame.js'),
-    endGame   = require('./src/endGame.js'),
-    next      = require('./src/next.js'),
-    move      = require('./src/move.js');
+var action = {
+  version   : require('./src/version.js'),
+  startGame : require('./src/startGame.js'),
+  listGames : require('./src/listGames.js'),
+  joinGame  : require('./src/joinGame.js'),
+  endGame   : require('./src/endGame.js'),
+  next      : require('./src/next.js'),
+  move      : require('./src/move.js'),
+  serverAdmin: require('./src/serverAdmin.js')
+};
 
 // Server Time
 var server_time = 0;
@@ -40,32 +42,8 @@ http.createServer(function(req,res){
     // Return 103 if the request was not found
     ret(res, err(103));
   } else {
-    switch(p){
-      case 'version':
-        version(res);
-        break;
-      case 'startGame':
-        startGame(res, q, server_time);
-        break;
-      case 'listGames':
-        listGames(res, q, server_time);
-        break;
-      case 'joinGame':
-        joinGame(res, q, server_time);
-        break;
-      case 'endGame':
-        endGame(res, q, server_time);
-        break;
-      case 'next':
-        next(res, q);
-        break;
-      case 'move':
-        move(res, q, server_time);
-        break;
-      case 'serverAdmin':
-        serverAdmin(res);
-        break;
-    }
+    // Otherwise execute the proper command
+    action[p](res, q ,server_time);
   }
 
 }).listen(config.server.port);
