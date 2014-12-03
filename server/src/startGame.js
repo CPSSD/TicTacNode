@@ -25,6 +25,16 @@ module.exports = function(res, q, s_t){
       var secret = secretGen();
 
       var gameObj = {
+        id: loc_id,
+        description: desc,
+        finished: false,
+        next: 1,
+        private: q.private,
+        pin: checkParam("pin",q) ? q.pin : null,
+        board: [0,0,0,0,0,0,0,0,0],
+        start_time: s_t,
+        // Set the timeout time when the game starts
+        last_move: s_t-config.server.timeout+config.server.start_timeout,
         player: [
           {
             name: q.name,
@@ -32,17 +42,6 @@ module.exports = function(res, q, s_t){
             letter: lett
           }
         ],
-        board: [0,0,0,0,0,0,0,0,0],
-        next: 1,
-        finished: false,
-        start_time: s_t,
-
-        // Set the timeout time when the game starts
-        last_move: s_t-config.server.timeout+config.server.start_timeout,
-        description: desc,
-        private: q.private,
-        pin: checkParam("pin",q) ? q.pin : null,
-        id: loc_id
       };
 
       db.games.insert(gameObj, function(){
@@ -73,7 +72,7 @@ function checkParameters(q){
           if(q.pin.length == 4){
             return 1;
           } else {
-            return 101;
+            return 100;
           }
         } else {
           return 101;
