@@ -37,7 +37,7 @@ This will create a folder called "doc", in which you will find documentation for
 ###Usage:
 The AI is run from the command line as follows:
 ```bash
-$ tictacnode_ai [hostname] [ai_name] [num_of_games]
+$ tictacnode_ai [num_of_games] [hostname] [ai_name]
 ```
 
 The hostname is an optional argument which takes a URL pointing to an instance of the TicTacNode 
