@@ -18,7 +18,7 @@ namespace WindowsFormsApplication1
 
     public partial class Form1 : Form
     {
-        string host = "http://cpssd4.computing.dcu.ie:80";
+        string host = "http://cpssd4-web.computing.dcu.ie:80";
         bool myTurn = false;
         int doMove = -1;
         Button[] playButton;
