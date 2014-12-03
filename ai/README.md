@@ -47,5 +47,4 @@ server. If no port number is supplied, it will default to 80. If left blank, the
 The ai_name is another optional argument which takes a string saying the name you wish the AI to use 
 when connecting to the server. If no name is supplied, it will default to "ColinAI".
 
-The num_of_games is the final optional argument which takes an int with the number of concurrent games you wish to run, with
-a maximum of 20. If no number is supplied, it will default to 1 game.
+The num_of_games is the final optional argument which takes an int with the number of concurrent games you wish to run. Please note that the AI waits 2 seconds before switching to a new game, so high numbers of concurrent games with result in large delays between moves. If no number is supplied, it will default to 1 game.
