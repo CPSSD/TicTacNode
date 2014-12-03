@@ -134,6 +134,7 @@
             this.description1 = new System.Windows.Forms.Label();
             this.gameId1 = new System.Windows.Forms.Label();
             this.startedBy1 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
             this.MainMenu.SuspendLayout();
             this.showSettings.SuspendLayout();
             this.StartGameMenu.SuspendLayout();
@@ -251,10 +252,10 @@
             // curHost
             // 
             this.curHost.AutoSize = true;
-            this.curHost.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.curHost.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.curHost.Location = new System.Drawing.Point(29, 149);
             this.curHost.Name = "curHost";
-            this.curHost.Size = new System.Drawing.Size(136, 33);
+            this.curHost.Size = new System.Drawing.Size(101, 25);
             this.curHost.TabIndex = 3;
             this.curHost.Text = "Current : ";
             // 
@@ -878,7 +879,6 @@
             // 
             // pictureBox1
             // 
-            //this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
             this.pictureBox1.Location = new System.Drawing.Point(52, 77);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(419, 310);
@@ -1052,7 +1052,7 @@
             // 
             this.startedBy4.AutoSize = true;
             this.startedBy4.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.startedBy4.Location = new System.Drawing.Point(290, 7);
+            this.startedBy4.Location = new System.Drawing.Point(228, 7);
             this.startedBy4.Name = "startedBy4";
             this.startedBy4.Size = new System.Drawing.Size(186, 25);
             this.startedBy4.TabIndex = 8;
@@ -1140,7 +1140,7 @@
             // 
             this.startedBy3.AutoSize = true;
             this.startedBy3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.startedBy3.Location = new System.Drawing.Point(290, 7);
+            this.startedBy3.Location = new System.Drawing.Point(228, 7);
             this.startedBy3.Name = "startedBy3";
             this.startedBy3.Size = new System.Drawing.Size(186, 25);
             this.startedBy3.TabIndex = 8;
@@ -1228,7 +1228,7 @@
             // 
             this.startedBy2.AutoSize = true;
             this.startedBy2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.startedBy2.Location = new System.Drawing.Point(290, 7);
+            this.startedBy2.Location = new System.Drawing.Point(228, 7);
             this.startedBy2.Name = "startedBy2";
             this.startedBy2.Size = new System.Drawing.Size(186, 25);
             this.startedBy2.TabIndex = 8;
@@ -1243,6 +1243,7 @@
             this.groupBox1.Controls.Add(this.playAs1);
             this.groupBox1.Controls.Add(this.description1);
             this.groupBox1.Controls.Add(this.gameId1);
+            this.groupBox1.Controls.Add(this.label16);
             this.groupBox1.Controls.Add(this.startedBy1);
             this.groupBox1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.groupBox1.Location = new System.Drawing.Point(21, 6);
@@ -1322,15 +1323,25 @@
             this.startedBy1.TabIndex = 8;
             this.startedBy1.Text = "Started by Jhonny";
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(228, 7);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(186, 25);
+            this.label16.TabIndex = 8;
+            this.label16.Text = "Started by Jhonny";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(664, 529);
-            this.Controls.Add(this.MainMenu);
-            this.Controls.Add(this.gamesList);
             this.Controls.Add(this.showSettings);
+            this.Controls.Add(this.gamesList);
             this.Controls.Add(this.playGame);
+            this.Controls.Add(this.MainMenu);
             this.Controls.Add(this.StartGameMenu);
             this.Name = "Form1";
             this.Text = "TicTacToe";
@@ -1463,6 +1474,7 @@
         private System.Windows.Forms.Label description1;
         private System.Windows.Forms.Label gameId1;
         private System.Windows.Forms.Label startedBy1;
+        private System.Windows.Forms.Label label16;
 
     }
 }
