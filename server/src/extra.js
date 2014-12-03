@@ -1,6 +1,7 @@
 var db = require('./db.js'),
     config = require('../config.json'),
-    btoa = require('btoa');
+    btoa = require('btoa'),
+    _ = require('underscore');
 
 module.exports = {
   // Removes old games,
@@ -49,6 +50,13 @@ module.exports = {
     }
   },
 
+  //Check do the parameters match between request and authorised parameters
+  checkParams: function(params, q){
+    params = (typeof params === null) ? [] : params;
+    q = Object.keys(q);
+    return _.isEqual(params, q) ? true : (params.splice(params.indexOf("pin"),1), _.isEqual(params, q));
+  },
+
   // Check how many parameters there is
   paramsLength: function(q){
     return Object.getOwnPropertyNames(q).length;
@@ -71,7 +79,7 @@ module.exports = {
       db.games.update({id: game_id}, { $set: { last_move: data.server_time } });
     });
   },
-  
+
   setWinner: function(game_id, letter){
     db.games.update({id: game_id},{ $set: { winner: letter, finished:true } }, function(){});
   },
