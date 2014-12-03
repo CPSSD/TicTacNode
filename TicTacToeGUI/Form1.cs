@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using System.IO;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace WindowsFormsApplication1
 
     public partial class Form1 : Form
     {
-        string host = "http://68.14.247.232";
+        string host = "http://cpssd4.computing.dcu.ie:80";
         bool myTurn = false;
         int doMove = -1;
         Button[] playButton;
@@ -76,7 +76,7 @@ namespace WindowsFormsApplication1
         {
             for (int i = 0; i < 3; i++)
             {
-                if (board[i * 3] == board[i * 3 + 1] && board[i*3] == board[i * 3 + 1] && board[i*3] != 0)
+                if (board[i * 3] == board[i * 3 + 1] && board[i*3] == board[i * 3 + 2] && board[i*3] != 0)
                 {
                     return board[i * 3];
                 }
@@ -599,6 +599,7 @@ namespace WindowsFormsApplication1
                 }
             }
         }
+
 
     }
 
