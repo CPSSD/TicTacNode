@@ -17,7 +17,7 @@ $ make all
 
 On windows, the program can be complied from command line using the following command. The path to the compiler depends on where .NET is installed. e.g C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe
 ```bash
-$ (path to compiler) ./*.cs /reference:Newtonsoft.Json.dll -o guiclient.exe
+$ (path to compiler) /out:guiclient.exe ./*.cs /reference:Newtonsoft.Json.dll
 ```
 
 
