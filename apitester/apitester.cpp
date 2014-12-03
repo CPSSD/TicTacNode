@@ -103,12 +103,14 @@ BOOST_AUTO_TEST_CASE(version)
     if(boost::unit_test::framework::master_test_suite().argc > 1) {
         host = boost::unit_test::framework::master_test_suite().argv[1];
     }
-    cout << "Testing: correct version" << endl;
     string serverResponse = getData("/version");
     jsonObject response = processJson(serverResponse);
     
+    cout << "Testing: correct version" << endl;
+    cout << "Returned: " << serverResponse << endl;
     BOOST_CHECK(response.versionMajor == 2);
     BOOST_CHECK(response.versionMinor == 2);
+    cout << endl;
 }
 
 BOOST_AUTO_TEST_CASE(emptyRequest)
@@ -117,8 +119,10 @@ BOOST_AUTO_TEST_CASE(emptyRequest)
     jsonObject response = processJson(serverResponse);
     
     cout << "Testing: empty request" << endl;
+    cout << "Returned: " << serverResponse << endl;
     BOOST_CHECK(response.status == "error");
     BOOST_CHECK(response.code == 103);
+    cout << endl;
 }
 
 BOOST_AUTO_TEST_CASE(missingParameter)
@@ -127,30 +131,94 @@ BOOST_AUTO_TEST_CASE(missingParameter)
     jsonObject response = processJson(serverResponse);
     
     cout << "Testing: request with missing parameter" << endl;
+    cout << "Returned: " << serverResponse << endl;
     BOOST_CHECK(response.status == "error");
     BOOST_CHECK(response.code == 101);
+    cout << endl;
 }
 
-BOOST_AUTO_TEST_CASE(unknownParameter)
-{
-    string serverResponse = getData("/startGame?nae=test1");
-    jsonObject response = processJson(serverResponse);
-    
-    cout << "Testing: request with unknown parameter" << endl;
-    BOOST_CHECK(response.status == "error");
-    BOOST_CHECK(response.code == 102);
-}
-
-BOOST_AUTO_TEST_CASE(newGameRequest)
+BOOST_AUTO_TEST_CASE(startGameRequest)
 {
     string serverResponse = getData("/startGame?name=test1&description='Test'&letter=1&private=0");
     jsonObject response = processJson(serverResponse);
     
     cout << "Testing: valid startGame request" << endl;
-    cout << response.status << endl;
-    cout << response.letter << endl;
+    cout << "Returned: " << serverResponse << endl;
     BOOST_CHECK(response.status == "okay");
     BOOST_CHECK(response.letter == 1 || response.letter == 2);
+    cout << endl;
+}
+
+BOOST_AUTO_TEST_CASE(startGameInvalidPIN)
+{
+    string serverResponse = getData("/startGame?name=test1&description='Test'&letter=1&private=1&pin=12345");
+    jsonObject response = processJson(serverResponse);
+    
+    cout << "Testing: startGame request with invalid PIN" << endl;
+    cout << "Returned: " << serverResponse << endl;
+    BOOST_CHECK(response.status == "error");
+    BOOST_CHECK(response.code == 100);
+    cout << endl;
+}
+
+BOOST_AUTO_TEST_CASE(startGameValidPIN)
+{
+    string serverResponse = getData("/startGame?name=test1&description='Test'&letter=1&private=1&pin=1234");
+    jsonObject response = processJson(serverResponse);
+    
+    cout << "Testing: startGame request with valid PIN" << endl;
+    cout << "Returned: " << serverResponse << endl;
+    BOOST_CHECK(response.status == "okay");
+    BOOST_CHECK(response.letter == 1 || response.letter == 2);
+    cout << endl;
+}
+
+BOOST_AUTO_TEST_CASE(validJoinGameRequest)
+{
+    string serverResponse = getData("/startGame?name=test1&description='Test'&letter=1&private=0");
+    jsonObject response = processJson(serverResponse);
+    
+    string id = response.id;
+    serverResponse = getData("/joinGame?id="+id+"&name=test1");
+    response = processJson(serverResponse);
+    
+    cout << "Testing: valid public joinGame request" << endl;
+    cout << "Returned: " << serverResponse << endl;
+    BOOST_CHECK(response.status == "okay");
+    BOOST_CHECK(response.letter == 1 || response.letter == 2);
+    cout << endl;
+}
+
+BOOST_AUTO_TEST_CASE(joinGameRequestIncorrectPIN)
+{
+    string serverResponse = getData("/startGame?name=test1&description='Test'&letter=1&private=1&pin=1234");
+    jsonObject response = processJson(serverResponse);
+    
+    string id = response.id;
+    serverResponse = getData("/joinGame?id="+id+"&name=test1&pin=4723");
+    response = processJson(serverResponse);
+    
+    cout << "Testing: private joinGame request with incorrect PIN" << endl;
+    cout << "Returned: " << serverResponse << endl;
+    BOOST_CHECK(response.status == "error");
+    BOOST_CHECK(response.code == 100);
+    cout << endl;
+}
+
+BOOST_AUTO_TEST_CASE(joinGameRequestCorrectPIN)
+{
+    string serverResponse = getData("/startGame?name=test1&description='Test'&letter=1&private=1&pin=1234");
+    jsonObject response = processJson(serverResponse);
+    
+    string id = response.id;
+    serverResponse = getData("/joinGame?id="+id+"&name=test1&pin=1234");
+    response = processJson(serverResponse);
+    
+    cout << "Testing: private joinGame request with correct PIN" << endl;
+    cout << "Returned: " << serverResponse << endl;
+    BOOST_CHECK(response.status == "okay");
+    BOOST_CHECK(response.letter == 1 || response.letter == 2);
+    cout << endl;
 }
 
 BOOST_AUTO_TEST_CASE(nextRequestInvalidID)
@@ -159,8 +227,10 @@ BOOST_AUTO_TEST_CASE(nextRequestInvalidID)
     jsonObject response = processJson(serverResponse);
     
     cout << "Testing: next request with invalid secret" << endl;
+    cout << "Returned: " << serverResponse << endl;
     BOOST_CHECK(response.status == "error");
-    BOOST_CHECK(response.code == 100);
+    BOOST_CHECK(response.code == 107);
+    cout << endl;
 }
 
 BOOST_AUTO_TEST_CASE(moveRequestInvalidID)
@@ -169,8 +239,10 @@ BOOST_AUTO_TEST_CASE(moveRequestInvalidID)
     jsonObject response = processJson(serverResponse);
     
     cout << "Testing: move request with invalid secret" << endl;
+    cout << "Returned: " << serverResponse << endl;
     BOOST_CHECK(response.status == "error");
-    BOOST_CHECK(response.code == 100);
+    BOOST_CHECK(response.code == 107);
+    cout << endl;
 }
 
 BOOST_AUTO_TEST_CASE(outOfBoundsMove)
@@ -182,8 +254,10 @@ BOOST_AUTO_TEST_CASE(outOfBoundsMove)
     response = processJson(serverResponse);
     
     cout << "Testing: move request out of bounds" << endl;
+    cout << "Returned: " << serverResponse << endl;
     BOOST_CHECK(response.status == "error");
     BOOST_CHECK(response.code == 106);
+    cout << endl;
 }
 
 BOOST_AUTO_TEST_CASE(moveRequestNotTurn)
@@ -195,8 +269,10 @@ BOOST_AUTO_TEST_CASE(moveRequestNotTurn)
     response = processJson(serverResponse);
     
     cout << "Testing: move request not player's turn" << endl;
+    cout << "Returned: " << serverResponse << endl;
     BOOST_CHECK(response.status == "error");
     BOOST_CHECK(response.code == 105);
+    cout << endl;
 }
 
 BOOST_AUTO_TEST_CASE(validMove)
@@ -208,7 +284,9 @@ BOOST_AUTO_TEST_CASE(validMove)
     response = processJson(serverResponse);
     
     cout << "Testing: valid move request" << endl;
+    cout << "Returned: " << serverResponse << endl;
     BOOST_CHECK(response.status == "okay");
+    cout << endl;
 }
 
 BOOST_AUTO_TEST_CASE(validNext)
@@ -220,5 +298,21 @@ BOOST_AUTO_TEST_CASE(validNext)
     response = processJson(serverResponse);
     
     cout << "Testing: valid next request" << endl;
+    cout << "Returned: " << serverResponse << endl;
     BOOST_CHECK(response.status == "okay");
+    cout << endl;
+}
+
+BOOST_AUTO_TEST_CASE(validEndGame)
+{
+    string serverResponse = getData("/startGame?name=outOfBoundsTest&description='Test'&letter=1&private=0");
+    jsonObject response = processJson(serverResponse);
+    
+    serverResponse = getData("/endGame?secret=" + response.secret);
+    response = processJson(serverResponse);
+    
+    cout << "Testing: valid endGame request" << endl;
+    cout << "Returned: " << serverResponse << endl;
+    BOOST_CHECK(response.status == "okay");
+    cout << endl;
 }
