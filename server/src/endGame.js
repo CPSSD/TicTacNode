@@ -6,7 +6,13 @@ var db = require('./db.js'),
     checkParam = extra.checkParam,
     updateLastMove = extra.updateLastMove;
 
-// endGame function
+/**
+ * endGame function
+ * @function
+ * @param {object} res - The response object
+ * @param {object} q - The current query with all the parameters
+ * @param {integer} s_t - Current server time
+**/
 module.exports = function(res, q, s_t){
   if(!checkParam("secret",q)){
     ret(res, err(101));

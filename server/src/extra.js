@@ -3,8 +3,16 @@ var db = require('./db.js'),
     btoa = require('btoa'),
     _ = require('underscore');
 
+/**
+ * Create the extra object and return
+ * @module
+**/
 module.exports = {
-  // Removes old games,
+  /**
+   * Remove old games
+   * @function
+   * @param {integer} s_t - Current server time
+  **/
   removeOldGames: function(s_t){
     db.games.update(
       { "last_move": { $lt: s_t - config.server.timeout } },
@@ -14,7 +22,12 @@ module.exports = {
     );
   },
 
-  // Updates the server time in the database and returns the time
+  /**
+   * Updates the server time in the database and returns the time
+   * @function
+   * @param {function} callback - Return updated server time once complete
+   * @returns {integer} callback - Return current server time as callback parameter
+  **/
   updateServerTime: function(callback){
   	db.meta.findAndModify({
   		query: {},
@@ -26,6 +39,12 @@ module.exports = {
     });
   },
 
+  /**
+   * Increment the game ID and return asynchronously
+   * @function
+   * @param {function} callback - Return the updated ID once the action is completed
+   * @returns {integer} Integer value of current game as callback parameter
+  **/
   updateGameID: function(callback){
     db.meta.findAndModify({
       query: {},
@@ -37,7 +56,13 @@ module.exports = {
     });
   },
 
-  // Check does the list of requests contain a specific request
+  /**
+   * Check does the list of requests contain a specific request
+   * @function
+   * @param {string} param - The property to be checked
+   * @param {object} q - The object containing all current requests
+   * @returns {boolean} Whether the query did contain the specific param
+  **/
   checkParam: function(param, q){
     if(!q.hasOwnProperty(param)){
       return false;
@@ -50,19 +75,35 @@ module.exports = {
     }
   },
 
-  //Check do the parameters match between request and authorised parameters
+  /**
+   * Check do the parameters match between request and authorised parameters
+   * @function
+   * @param {array} params - The array of properties to be checked
+   * @param {object} q - The object containing all current requests
+   * @returns {boolean}
+  **/
   checkParams: function(params, q){
     params = (typeof params === null) ? [] : params;
     q = Object.keys(q);
     return _.isEqual(params, q) ? true : (params.splice(params.indexOf("pin"),1), _.isEqual(params, q));
   },
 
-  // Check how many parameters there is
+  /**
+   * Check how many parameters there are
+   * @function
+   * @param {object} q - The object containing all current requests
+   * @returns {integer} The amount of current requests
+  **/
   paramsLength: function(q){
     return Object.getOwnPropertyNames(q).length;
   },
 
   // Generate the secret
+  /**
+   * Check do the parameters match between request and authorised parameters
+   * @function
+   * @returns {string} base64 encoded random string
+  **/
   secretGen: function(){
     var r1 = Math.floor( Math.random()*Math.pow(10,17) ).toString(),
         r2 = Math.floor( Math.random()*Math.pow(10,17) ).toString(),
@@ -73,18 +114,33 @@ module.exports = {
     return btoa( r );
   },
 
-  // Function to update last move
+  /**
+   * Function to update the time of last move on the server
+   * @function
+   * @param {string} game_id - The ID of the game to be updated
+  **/
   updateLastMove: function(game_id){
     db.meta.findOne({}, function(er, data){
       db.games.update({id: game_id}, { $set: { last_move: data.server_time } });
     });
   },
 
+  /**
+   * Function to set a winner of the current game
+   * @private
+   * @function
+   * @param {string} game_id - The ID of the game to be updated
+   * @param {integer} letter - The letter of the winning player
+  **/
   setWinner: function(game_id, letter){
     db.games.update({id: game_id},{ $set: { winner: letter, finished:true } }, function(){});
   },
 
-  // get the winner of the game
+  /**
+   * Function check the winner of the game
+   * @function
+   * @param {string} game_id - The ID of the game
+  **/
   checkWinner: function(game_id){
     db.games.findOne({id: game_id}, function(er, game){
       var b = game.board;

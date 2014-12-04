@@ -2,7 +2,11 @@
 var mongojs = require('mongojs'),
     config = require('../config.json');
 
-// Create the database connection and export it
+/**
+ * Create database and export it together with added indexes
+ * @exports db
+ * @returns {object} Database connection
+**/
 var db = mongojs(config.db.name, config.db.collections);
 
 db.games.ensureIndex("players");

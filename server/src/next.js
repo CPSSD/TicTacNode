@@ -5,7 +5,10 @@ var db = require('./db.js'),
 
     checkParam = extra.checkParam;
 
-// next function
+/**
+ * Check the current board status and who is next to play
+ * @exports next
+**/
 module.exports = function(res, q){
 
   if(!checkParam("secret",q)){

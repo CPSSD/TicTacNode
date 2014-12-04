@@ -7,7 +7,10 @@ var db = require('./db.js'),
     secretGen = extra.secretGen,
     updateLastMove = extra.updateLastMove;
 
-// joinGame function
+/**
+ * Create the error function
+ * @exports joinGame
+**/
 module.exports = function(res, q, s_t){
 
   if(!checkParam("id", q) || !checkParam("name", q) ){
@@ -52,16 +55,23 @@ module.exports = function(res, q, s_t){
 
 };
 
-// Function to send to the player when we got successfully inserted into the database
+/**
+ * Send player a response if database insertion is successful
+ * @method
+ * @param {object} res - Reponse object
+ * @param {object} newPlaner - new player object containing info for the player
+**/
 var insertSuccess = function(res, newPlayer){
   ret(res, {"status": "okay", "secret": newPlayer.secret, "letter": newPlayer.letter});
 };
 
-
-// Function to perform insertion, takes in
-//    res (object of current HTTP connection),
-//    q (object containing the parameters) and
-//    game (object containing current game)
+/**
+ * Function to perform insertion
+ * @method
+ * @param {object} res - Reponse object
+ * @param {object} q - The current query
+ * @param {object} game - Current game
+**/
 var performInsertion = function(res, q, game){
   // Initialize new player data
   var newPlayer = {
@@ -82,6 +92,8 @@ var performInsertion = function(res, q, game){
 };
 
 
-// Export the functions for testing
+/**
+ * Exports the functions for testing
+**/
 exports.insertSuccess = insertSuccess;
 exports.performInsertion = performInsertion;

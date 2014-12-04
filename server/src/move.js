@@ -6,7 +6,10 @@ var db = require('./db.js'),
     checkParam = extra.checkParam;
     checkWinner = extra.checkWinner;
 
-// move function
+/**
+ * Perform a move
+ * @exports move
+**/
 module.exports = function(res, q, s_t){
   if(!checkParam("secret",q) || !checkParam("position",q) ){
     ret(res, err(101));

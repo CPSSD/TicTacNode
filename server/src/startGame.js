@@ -9,7 +9,10 @@ var checkParam = extra.checkParam,
     secretGen = extra.secretGen,
     updateGameID = extra.updateGameID;
 
-// startGame function
+/**
+ * Export the game starting function
+ * @exports startGame
+**/
 module.exports = function(res, q, s_t){
 
   var paramsCheck = checkParameters(q);
@@ -59,6 +62,10 @@ module.exports = function(res, q, s_t){
 
 };
 
+/**
+ * Check the current requests
+ * @exports joinGame
+**/
 function checkParameters(q){
   var n = checkParam("name",q),
       d = checkParam("description",q),

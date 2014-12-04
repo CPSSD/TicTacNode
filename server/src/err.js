@@ -1,4 +1,8 @@
-// Error function
+/**
+ * Create the error function
+ * @exports err
+ * @returns {object} The error message
+**/
 module.exports = function(c, msg){
   var ret = {};
   ret.status = "error";

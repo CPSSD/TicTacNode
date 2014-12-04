@@ -3,7 +3,10 @@ var db = require('./db.js'),
     extra = require('./extra.js'),
     err = require('./err.js');
 
-// listGames function
+/**
+ * Lists all current games
+ * @exports listGames
+**/
 module.exports = function(res, q, s_t){
   db.games.find({ finished: false, player: { $size: 1 } }, function(er, dataa){
     var games = [];
