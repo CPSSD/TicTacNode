@@ -1,9 +1,32 @@
 {
-  "port":1337,
-  "authorised_requests": [
-    "/newGame",
-    "/next",
-    "/move",
-    "/serverAdmin"
-  ]
+  "version": {
+    "major":2,
+    "minor":2
+  },
+
+  "db":{
+    "name":"tictacnode",
+    "collections": [
+      "games",
+      "meta"
+    ]
+  },
+
+  "authReq": [
+    "version",
+    "startGame",
+    "listGames",
+    "joinGame",
+    "endGame",
+    "next",
+    "move",
+    "serverAdmin"
+  ],
+
+  "server": {
+    "check_interval": 20000,
+    "timeout": 3,
+    "start_timeout": 6,
+    "port":80
+  }
 }
