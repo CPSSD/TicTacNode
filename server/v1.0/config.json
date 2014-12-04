@@ -1,9 +1,0 @@
-{
-  "port":1337,
-  "authorised_requests": [
-    "/newGame",
-    "/next",
-    "/move",
-    "/serverAdmin"
-  ]
-}
