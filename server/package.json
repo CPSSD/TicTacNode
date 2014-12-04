@@ -27,9 +27,5 @@
     "forever":"0.13.0",
     "btoa":"1.1.2",
     "underscore":"1.7.0"
-  },
-
-  "scripts":{
-    "stop":"forever stop TicTacNode"
   }
 }
