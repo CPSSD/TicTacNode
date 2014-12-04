@@ -1,9 +1,26 @@
 #!/bin/bash
 
-echo "Starting TicTacNode Server..."
+clear
+echo -e '\e[1;35m
+            _______ _______ _   _
+           |__   __|__   __| \ | |
+              | |     | |  |  \| |
+              | |     | |  | . ` |
+              | |     | |  | |\  |
+              |_|     |_|  |_| \_|
+
+                  TicTacNode
+\e[0m'
+
+if [ ! "$(pidof mongod)" ]; then
+  echo -e "\e[1;31mMongoDB must be running in order to start the server\n\n\e[0m"
+  exit 0
+fi
+
+echo -e "\e[1;35mStarting TicTacNode Server...\n\n\e[0m"
 
 if forever start -a --minUptime 1000 --spinSleepTime 1000 --uid "TicTacNode" tictacnode.js &> /dev/null; then
-  echo -e "Server Started"
+  echo -e "\e[1;32mServer Started\n\n\e[0m"
 else
-  echo -e "Server failed to start";
+  echo -e "\e[1;31mServer failed to start. Please consult the README\e[0m";
 fi
